@@ -1,4 +1,4 @@
-![Logo](http://svg.wiersma.co.za/github/project?lang=go&title=cmd&tag=Go%20cmd%20helper)
+![Logo](http://svg.wiersma.co.za/hamba/project?title=cmd&tag=Go%20cmd%20helper)
 
 [![Go Report Card](https://goreportcard.com/badge/github.com/hamba/cmd)](https://goreportcard.com/report/github.com/hamba/cmd)
 [![Build Status](https://travis-ci.com/hamba/cmd.svg?branch=master)](https://travis-ci.com/hamba/cmd)
