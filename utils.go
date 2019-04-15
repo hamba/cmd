@@ -8,10 +8,10 @@ import (
 	"syscall"
 )
 
-// SplitTags splits a slice of strings into a slice using
+// SplitStatsTags splits a slice of strings into a slice using
 // the given separator.
-func SplitTags(slice []string, sep string) ([]interface{}, error) {
-	res := make([]interface{}, 2*len(slice))
+func SplitTags(slice []string, sep string) ([]string, error) {
+	res := make([]string, 2*len(slice))
 
 	for i, str := range slice {
 		parts := strings.SplitN(str, sep, 2)
