@@ -24,9 +24,14 @@ func NewLogger(c *cli.Context) (logger.Logger, error) {
 	h := logger.BufferedStreamHandler(os.Stdout, 2000, 1*time.Second, fmtr)
 	h = logger.LevelFilterHandler(lvl, h)
 
-	ctx, err := SplitTags(c.StringSlice(FlagLogTags), "=")
+	tags, err := SplitTags(c.StringSlice(FlagLogTags), "=")
 	if err != nil {
 		return nil, err
+	}
+
+	ctx := make([]interface{}, len(tags))
+	for i, t := range tags {
+		ctx[i] = t
 	}
 
 	return logger.New(h, ctx...), nil
