@@ -17,7 +17,7 @@ func NewStats(c *cli.Context, l log.Logger) (stats.Statter, error) {
 	var s stats.Statter
 	var err error
 
-	dsn := c.String(FlagStatsDSN)
+	dsn := c.GlobalString(FlagStatsDSN)
 	if dsn == "" {
 		return stats.Null, nil
 	}
@@ -41,7 +41,7 @@ func NewStats(c *cli.Context, l log.Logger) (stats.Statter, error) {
 		return nil, fmt.Errorf("unsupported stats type: %s", uri.Scheme)
 	}
 
-	tags, err := SplitTags(c.StringSlice(FlagStatsTags), "=")
+	tags, err := SplitTags(c.GlobalStringSlice(FlagStatsTags), "=")
 	if err != nil {
 		return nil, err
 	}
@@ -53,7 +53,7 @@ func NewStats(c *cli.Context, l log.Logger) (stats.Statter, error) {
 }
 
 func newStatsd(c *cli.Context, addr string) (stats.Statter, error) {
-	s, err := statsd.NewBuffered(addr, c.String(FlagStatsPrefix), statsd.WithFlushInterval(1*time.Second))
+	s, err := statsd.NewBuffered(addr, c.GlobalString(FlagStatsPrefix), statsd.WithFlushInterval(1*time.Second))
 	if err != nil {
 		return nil, err
 	}
@@ -62,5 +62,5 @@ func newStatsd(c *cli.Context, addr string) (stats.Statter, error) {
 }
 
 func newL2met(c *cli.Context, l log.Logger) stats.Statter {
-	return l2met.New(l, c.String(FlagStatsPrefix))
+	return l2met.New(l, c.GlobalString(FlagStatsPrefix))
 }
