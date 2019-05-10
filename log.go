@@ -10,7 +10,7 @@ import (
 
 // NewLogger creates a new logger.
 func NewLogger(c *cli.Context) (logger.Logger, error) {
-	str := c.String(FlagLogLevel)
+	str := c.GlobalString(FlagLogLevel)
 	if str == "" {
 		str = "info"
 	}
@@ -24,7 +24,7 @@ func NewLogger(c *cli.Context) (logger.Logger, error) {
 	h := logger.BufferedStreamHandler(os.Stdout, 2000, 1*time.Second, fmtr)
 	h = logger.LevelFilterHandler(lvl, h)
 
-	tags, err := SplitTags(c.StringSlice(FlagLogTags), "=")
+	tags, err := SplitTags(c.GlobalStringSlice(FlagLogTags), "=")
 	if err != nil {
 		return nil, err
 	}
@@ -38,7 +38,7 @@ func NewLogger(c *cli.Context) (logger.Logger, error) {
 }
 
 func newLogFormatter(c *cli.Context) logger.Formatter {
-	format := c.String(FlagLogFormat)
+	format := c.GlobalString(FlagLogFormat)
 	switch format {
 
 	case "json":
