@@ -11,7 +11,7 @@ import (
 	"github.com/hamba/pkg/stats"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"gopkg.in/urfave/cli.v1"
+	"gopkg.in/urfave/cli.v2"
 )
 
 func TestNewContext(t *testing.T) {
@@ -120,7 +120,7 @@ func TestContext_CloseErrors(t *testing.T) {
 
 func newTestContext() (*cli.Context, *flag.FlagSet) {
 	fs := flag.NewFlagSet("test", flag.ContinueOnError)
-	c := cli.NewContext(cli.NewApp(), fs, nil)
+	c := cli.NewContext(&cli.App{}, fs, nil)
 
 	return c, fs
 }

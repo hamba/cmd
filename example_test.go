@@ -4,7 +4,7 @@ import (
 	"fmt"
 
 	"github.com/hamba/cmd"
-	"gopkg.in/urfave/cli.v1"
+	"gopkg.in/urfave/cli.v2"
 )
 
 func ExampleNewContext() {

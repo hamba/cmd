@@ -6,7 +6,7 @@ import (
 	"github.com/hamba/cmd"
 	"github.com/hamba/pkg/log"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/urfave/cli.v1"
+	"gopkg.in/urfave/cli.v2"
 )
 
 func TestNewLogger(t *testing.T) {
@@ -21,56 +21,56 @@ func TestNewLogger(t *testing.T) {
 			name:    "Json Format",
 			lvl:     "info",
 			format:  "json",
-			tags:    &cli.StringSlice{},
+			tags:    cli.NewStringSlice(),
 			wantErr: false,
 		},
 		{
 			name:    "Logfmt Format",
 			lvl:     "info",
 			format:  "logfmt",
-			tags:    &cli.StringSlice{},
+			tags:    cli.NewStringSlice(),
 			wantErr: false,
 		},
 		{
 			name:    "No Format",
 			lvl:     "",
 			format:  "json",
-			tags:    &cli.StringSlice{},
+			tags:    cli.NewStringSlice(),
 			wantErr: false,
 		},
 		{
 			name:    "Invalid Format",
 			lvl:     "info",
 			format:  "invalid",
-			tags:    &cli.StringSlice{},
+			tags:    cli.NewStringSlice(),
 			wantErr: false,
 		},
 		{
 			name:    "Valid Level",
 			lvl:     "info",
 			format:  "",
-			tags:    &cli.StringSlice{},
+			tags:    cli.NewStringSlice(),
 			wantErr: false,
 		},
 		{
 			name:    "Invalid Level",
 			lvl:     "invalid",
 			format:  "json",
-			tags:    &cli.StringSlice{},
+			tags:    cli.NewStringSlice(),
 			wantErr: true,
 		},
 		{
 			name:    "Tags",
 			lvl:     "info",
 			format:  "json",
-			tags:    &cli.StringSlice{"a=b"},
+			tags:    cli.NewStringSlice("a=b"),
 			wantErr: false,
 		},
 		{
 			name:    "Invalid Tags",
 			lvl:     "info",
 			format:  "json",
-			tags:    &cli.StringSlice{"single"},
+			tags:    cli.NewStringSlice("single"),
 			wantErr: true,
 		},
 	}

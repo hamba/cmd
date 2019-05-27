@@ -5,7 +5,7 @@ import (
 
 	"github.com/hamba/pkg/log"
 	"github.com/hamba/pkg/stats"
-	"gopkg.in/urfave/cli.v1"
+	"gopkg.in/urfave/cli.v2"
 )
 
 // Context represents an application context.
