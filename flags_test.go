@@ -5,13 +5,13 @@ import (
 
 	"github.com/hamba/cmd"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/urfave/cli.v1"
+	"gopkg.in/urfave/cli.v2"
 )
 
 func TestFlags_Merge(t *testing.T) {
-	f1 := cli.StringFlag{}
-	f2 := cli.StringFlag{}
-	f3 := cli.StringFlag{}
+	f1 := &cli.StringFlag{}
+	f2 := &cli.StringFlag{}
+	f3 := &cli.StringFlag{}
 	flags1 := cmd.Flags{f1}
 	flags2 := cmd.Flags{f2}
 	flags3 := cmd.Flags{f3}
