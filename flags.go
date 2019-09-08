@@ -41,8 +41,8 @@ var ServerFlags = Flags{
 	},
 }
 
-// CommonFlags are flags that configure logging and stats.
-var CommonFlags = Flags{
+// LogFlags are flags that configure logging.
+var LogFlags = Flags{
 	&cli.StringFlag{
 		Name:    FlagLogFormat,
 		Usage:   "Specify the format of logs. Supported formats: 'logfmt', 'json'",
@@ -59,6 +59,10 @@ var CommonFlags = Flags{
 		Usage:   "A list of tags appended to every log. Format: key=value.",
 		EnvVars: []string{"LOG_TAGS"},
 	},
+}
+
+// StatsFlags are flags that configure stats.
+var StatsFlags = Flags{
 	&cli.StringFlag{
 		Name:    FlagStatsDSN,
 		Usage:   "The URL of a stats backend.",
@@ -75,3 +79,8 @@ var CommonFlags = Flags{
 		EnvVars: []string{"STATS_TAGS"},
 	},
 }
+
+// CommonFlags are flags that configure logging and stats.
+//
+// Common flags include LogFlags and StatsFlags.
+var CommonFlags = Flags{}.Merge(LogFlags, StatsFlags)

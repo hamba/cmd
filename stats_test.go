@@ -40,6 +40,20 @@ func TestNewStats(t *testing.T) {
 			wantErr: false,
 		},
 		{
+			name:    "Prometheus",
+			dsn:     "prometheus://",
+			prefix:  "test",
+			tags:    cli.NewStringSlice(),
+			wantErr: false,
+		},
+		{
+			name:    "Prometheus With Server",
+			dsn:     "prometheus://:51234",
+			prefix:  "test",
+			tags:    cli.NewStringSlice(),
+			wantErr: false,
+		},
+		{
 			name:    "Unknown Stats",
 			dsn:     "unknownscheme://",
 			prefix:  "",
