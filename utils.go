@@ -8,7 +8,7 @@ import (
 	"syscall"
 )
 
-// SplitStatsTags splits a slice of strings into a slice using
+// SplitTags splits a slice of strings into a slice using
 // the given separator.
 func SplitTags(slice []string, sep string) ([]string, error) {
 	res := make([]string, 2*len(slice))

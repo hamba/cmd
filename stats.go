@@ -2,12 +2,14 @@ package cmd
 
 import (
 	"fmt"
+	"net/http"
 	"net/url"
 	"time"
 
 	"github.com/hamba/pkg/log"
 	"github.com/hamba/pkg/stats"
 	"github.com/hamba/statter/l2met"
+	"github.com/hamba/statter/prometheus"
 	"github.com/hamba/statter/statsd"
 	"gopkg.in/urfave/cli.v2"
 )
@@ -37,6 +39,9 @@ func NewStats(c *cli.Context, l log.Logger) (stats.Statter, error) {
 	case "l2met":
 		s = newL2met(c, l)
 
+	case "prometheus":
+		s = newPrometheusStats(c, uri.Host, l)
+
 	default:
 		return nil, fmt.Errorf("unsupported stats type: %s", uri.Scheme)
 	}
@@ -63,4 +68,20 @@ func newStatsd(c *cli.Context, addr string) (stats.Statter, error) {
 
 func newL2met(c *cli.Context, l log.Logger) stats.Statter {
 	return l2met.New(l, c.String(FlagStatsPrefix))
+}
+
+func newPrometheusStats(c *cli.Context, addr string, l log.Logger) stats.Statter {
+	s := prometheus.New(c.String(FlagStatsPrefix), l)
+
+	if addr != "" {
+		mux := http.NewServeMux()
+		mux.Handle("/metrics", s.Handler())
+		go func() {
+			if err := http.ListenAndServe(addr, mux); err != nil && err != http.ErrServerClosed {
+				l.Error(err.Error())
+			}
+		}()
+	}
+
+	return s
 }
