@@ -11,7 +11,7 @@ import (
 	"github.com/hamba/statter/l2met"
 	"github.com/hamba/statter/prometheus"
 	"github.com/hamba/statter/statsd"
-	"gopkg.in/urfave/cli.v2"
+	"github.com/urfave/cli/v2"
 )
 
 // NewStats creates a new statter.
