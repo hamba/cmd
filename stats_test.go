@@ -7,7 +7,7 @@ import (
 	"github.com/hamba/pkg/log"
 	"github.com/hamba/pkg/stats"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/urfave/cli.v2"
+	"github.com/urfave/cli/v2"
 )
 
 func TestNewStats(t *testing.T) {

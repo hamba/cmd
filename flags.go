@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"gopkg.in/urfave/cli.v2"
+	"github.com/urfave/cli/v2"
 )
 
 // Flag constants declared for CLI use.

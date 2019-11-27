@@ -11,7 +11,7 @@ import (
 	"github.com/hamba/pkg/stats"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-	"gopkg.in/urfave/cli.v2"
+	"github.com/urfave/cli/v2"
 )
 
 func TestNewContext(t *testing.T) {

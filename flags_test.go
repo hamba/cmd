@@ -5,7 +5,7 @@ import (
 
 	"github.com/hamba/cmd"
 	"github.com/stretchr/testify/assert"
-	"gopkg.in/urfave/cli.v2"
+	"github.com/urfave/cli/v2"
 )
 
 func TestFlags_Merge(t *testing.T) {
