@@ -12,7 +12,7 @@ require (
 	github.com/hamba/statter v1.2.2
 	github.com/prometheus/client_golang v1.2.1 // indirect
 	github.com/prometheus/procfs v0.0.8 // indirect
-	github.com/stretchr/testify v1.4.0
+	github.com/stretchr/testify v1.5.0
 	github.com/urfave/cli/v2 v2.0.0
 	golang.org/x/sys v0.0.0-20191127021746-63cb32ae39b2 // indirect
 )
