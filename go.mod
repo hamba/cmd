@@ -9,7 +9,7 @@ require (
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
 	github.com/hamba/logger v1.0.1
 	github.com/hamba/pkg v1.3.1
-	github.com/hamba/statter v1.2.2
+	github.com/hamba/statter v1.3.0
 	github.com/prometheus/client_golang v1.2.1 // indirect
 	github.com/prometheus/procfs v0.0.8 // indirect
 	github.com/stretchr/testify v1.5.1
