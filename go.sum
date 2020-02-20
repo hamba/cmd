@@ -41,6 +41,8 @@ github.com/google/go-cmp v0.3.1/go.mod h1:8QqcDgzrUqlUb/G2PQTWiueGozuR1884gddMyw
 github.com/google/gofuzz v1.0.0/go.mod h1:dBl0BpW6vV/+mYPU4Po3pmUjxk6FQPldtuIdl/M65Eg=
 github.com/hamba/logger v1.0.0 h1:oU48YnlHhXICxxVWPzE7xM8r4CXWCGOmVTOm/JmGlus=
 github.com/hamba/logger v1.0.0/go.mod h1:VwVyr/3chmU+XO4nD7zBwNsecMBv/8ZWVVjUt1rV+60=
+github.com/hamba/logger v1.0.1 h1:mYxWpqV4Tbyl/nY36PHLNsDebdE2NC4BGSMpkiL+VUQ=
+github.com/hamba/logger v1.0.1/go.mod h1:rpB9y29AN0sHvhc7QfzJZxgJFqh536/nZIFiVhqLkuE=
 github.com/hamba/pkg v1.3.0 h1:DWWAIaxcyB/1J0kGtDWKBDqgdk6Afjylfe/n3D9Dj0Q=
 github.com/hamba/pkg v1.3.0/go.mod h1:x7sDdKHbJ/B+8djhGSlyoBVjX/48kiM3k9f86p7eRhc=
 github.com/hamba/pkg v1.3.1 h1:xEnMVjhpxSLS1O0ySgG1p3r8lQ1PjsDclW7dt9w2qig=

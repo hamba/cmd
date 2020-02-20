@@ -7,7 +7,7 @@ require (
 	github.com/cactus/go-statsd-client/statsd v0.0.0-20191106001114-12b4e2b38748 // indirect
 	github.com/cespare/xxhash/v2 v2.1.1 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.0 // indirect
-	github.com/hamba/logger v1.0.0
+	github.com/hamba/logger v1.0.1
 	github.com/hamba/pkg v1.3.1
 	github.com/hamba/statter v1.2.2
 	github.com/prometheus/client_golang v1.2.1 // indirect
