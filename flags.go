@@ -22,7 +22,7 @@ type Flags []cli.Flag
 
 // Merge joins one or more Flags together, making a new set.
 func (f Flags) Merge(flags ...Flags) Flags {
-	var m Flags
+	m := make(Flags, 0, len(f))
 	m = append(m, f...)
 	for _, flag := range flags {
 		m = append(m, flag...)

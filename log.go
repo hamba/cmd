@@ -40,7 +40,6 @@ func NewLogger(c *cli.Context) (logger.Logger, error) {
 func newLogFormatter(c *cli.Context) logger.Formatter {
 	format := c.String(FlagLogFormat)
 	switch format {
-
 	case "json":
 		return logger.JSONFormat()
 
