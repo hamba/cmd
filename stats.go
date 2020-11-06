@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"errors"
 	"fmt"
 	"net/http"
 	"net/url"
@@ -77,7 +78,7 @@ func newPrometheusStats(c *cli.Context, addr string, l log.Logger) stats.Statter
 		mux := http.NewServeMux()
 		mux.Handle("/metrics", s.Handler())
 		go func() {
-			if err := http.ListenAndServe(addr, mux); err != nil && err != http.ErrServerClosed {
+			if err := http.ListenAndServe(addr, mux); err != nil && errors.Is(err, http.ErrServerClosed) {
 				l.Error(err.Error())
 			}
 		}()

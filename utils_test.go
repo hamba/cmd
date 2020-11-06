@@ -42,8 +42,8 @@ func TestWaitForSignals(t *testing.T) {
 
 	var wg sync.WaitGroup
 	for _, tt := range tests {
+		wg.Add(1)
 		go func() {
-			wg.Add(1)
 			defer wg.Done()
 
 			select {
