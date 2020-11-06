@@ -72,7 +72,7 @@ func newL2met(c *cli.Context, l log.Logger) stats.Statter {
 }
 
 func newPrometheusStats(c *cli.Context, addr string, l log.Logger) stats.Statter {
-	s := prometheus.New(c.String(FlagStatsPrefix), l)
+	s := prometheus.New(c.String(FlagStatsPrefix))
 
 	if addr != "" {
 		mux := http.NewServeMux()
