@@ -42,7 +42,8 @@ func newLogFormatter(c *cli.Context) logger.Formatter {
 	switch format {
 	case "json":
 		return logger.JSONFormat()
-
+	case "console":
+		return logger.ConsoleFormat()
 	default:
 		return logger.LogfmtFormat()
 	}
