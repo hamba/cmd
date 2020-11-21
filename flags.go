@@ -45,13 +45,13 @@ var ServerFlags = Flags{
 var LogFlags = Flags{
 	&cli.StringFlag{
 		Name:    FlagLogFormat,
-		Usage:   "Specify the format of logs. Supported formats: 'logfmt', 'json'",
+		Usage:   "Specify the format of logs. Supported formats: 'logfmt', 'json', 'console'",
 		EnvVars: []string{"LOG_FORMAT"},
 	},
 	&cli.StringFlag{
 		Name:    FlagLogLevel,
 		Value:   "info",
-		Usage:   "Specify the log level. E.g. 'debug', 'warning'.",
+		Usage:   "Specify the log level. E.g. 'debug', 'info', 'error'.",
 		EnvVars: []string{"LOG_LEVEL"},
 	},
 	&cli.StringSliceFlag{
