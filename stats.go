@@ -5,24 +5,84 @@ import (
 	"fmt"
 	"net/http"
 	"net/url"
+	"strconv"
 	"time"
 
-	"github.com/hamba/pkg/log"
-	"github.com/hamba/pkg/stats"
-	"github.com/hamba/statter/l2met"
-	"github.com/hamba/statter/prometheus"
-	"github.com/hamba/statter/statsd"
+	"github.com/hamba/logger/v2"
+	"github.com/hamba/logger/v2/ctx"
+	"github.com/hamba/statter/v2"
+	"github.com/hamba/statter/v2/reporter/l2met"
+	"github.com/hamba/statter/v2/reporter/prometheus"
+	"github.com/hamba/statter/v2/reporter/statsd"
 	"github.com/urfave/cli/v2"
 )
 
-// NewStats creates a new statter.
-func NewStats(c *cli.Context, l log.Logger) (stats.Statter, error) {
-	var s stats.Statter
-	var err error
+// Stats flag constants declared for CLI use.
+const (
+	FlagStatsDSN      = "stats.dsn"
+	FlagStatsInterval = "stats.interval"
+	FlagStatsPrefix   = "stats.prefix"
+	FlagStatsTags     = "stats.tags"
+)
 
+// StatsFlags are flags that configure stats.
+var StatsFlags = Flags{
+	&cli.StringFlag{
+		Name:    FlagStatsDSN,
+		Usage:   "The DSN of a stats backend.",
+		EnvVars: []string{"STATS_DSN"},
+	},
+	&cli.DurationFlag{
+		Name:    FlagStatsInterval,
+		Usage:   "The frequency at which the stats are reported.",
+		Value:   time.Second,
+		EnvVars: []string{"STATS_INTERVAL"},
+	},
+	&cli.StringFlag{
+		Name:    FlagStatsPrefix,
+		Usage:   "The prefix of the measurements names.",
+		EnvVars: []string{"STATS_PREFIX"},
+	},
+	&cli.StringSliceFlag{
+		Name:    FlagStatsTags,
+		Usage:   "A list of tags appended to every measurement. Format: key=value.",
+		EnvVars: []string{"STATS_TAGS"},
+	},
+}
+
+// NewStatter returns a statter configured from the cli.
+func NewStatter(c *cli.Context, log *logger.Logger) (*statter.Statter, error) {
+	r, err := createReporter(c, log)
+	if err != nil {
+		return nil, err
+	}
+
+	intv := c.Duration(FlagStatsInterval)
+	prefix, tags, err := statsWith(c)
+	if err != nil {
+		return nil, err
+	}
+
+	return statter.New(r, intv).With(prefix, tags...), nil
+}
+
+func statsWith(c *cli.Context) (string, []statter.Tag, error) {
+	strTags, err := Split(c.StringSlice(FlagStatsTags), "=")
+	if err != nil {
+		return "", nil, err
+	}
+	tags := make([]statter.Tag, len(strTags))
+	for i, st := range strTags {
+		tags[i] = statter.Tag{st[0], st[1]}
+	}
+
+	return c.String(FlagStatsPrefix), tags, nil
+}
+
+func createReporter(c *cli.Context, log *logger.Logger) (statter.Reporter, error) {
 	dsn := c.String(FlagStatsDSN)
 	if dsn == "" {
-		return stats.Null, nil
+		return statter.DiscardReporter, nil
 	}
 
 	uri, err := url.Parse(dsn)
@@ -32,57 +92,46 @@ func NewStats(c *cli.Context, l log.Logger) (stats.Statter, error) {
 
 	switch uri.Scheme {
 	case "statsd":
-		s, err = newStatsd(c, uri.Host)
-		if err != nil {
-			return nil, err
-		}
-
+		return newStatsd(uri.Host, uri.Query())
 	case "l2met":
-		s = newL2met(c, l)
-
+		return l2met.New(log, ""), nil
 	case "prometheus":
-		s = newPrometheusStats(c, uri.Host, l)
-
+		return newPrometheusStats(uri.Host, log), nil
 	default:
-		return nil, fmt.Errorf("unsupported stats type: %s", uri.Scheme)
+		return nil, fmt.Errorf("unsupported stats reporter: %s", uri.Scheme)
 	}
-
-	tags, err := SplitTags(c.StringSlice(FlagStatsTags), "=")
-	if err != nil {
-		return nil, err
-	}
-	if len(tags) > 0 {
-		s = stats.NewTaggedStatter(s, tags...)
-	}
-
-	return s, nil
 }
 
-func newStatsd(c *cli.Context, addr string) (stats.Statter, error) {
-	s, err := statsd.NewBuffered(addr, c.String(FlagStatsPrefix), statsd.WithFlushInterval(1*time.Second))
-	if err != nil {
-		return nil, err
+func newStatsd(addr string, qry url.Values) (*statsd.Statsd, error) {
+	var opts []statsd.Option
+	if s := qry.Get("flushBytes"); s != "" {
+		n, err := strconv.Atoi(s)
+		if err == nil {
+			opts = append(opts, statsd.WithFlushBytes(n))
+		}
+	}
+	if s := qry.Get("flushInterval"); s != "" {
+		d, err := time.ParseDuration(s)
+		if err == nil {
+			opts = append(opts, statsd.WithFlushInterval(d))
+		}
 	}
 
-	return s, nil
+	return statsd.New(addr, "", opts...)
 }
 
-func newL2met(c *cli.Context, l log.Logger) stats.Statter {
-	return l2met.New(l, c.String(FlagStatsPrefix))
-}
-
-func newPrometheusStats(c *cli.Context, addr string, l log.Logger) stats.Statter {
-	s := prometheus.New(c.String(FlagStatsPrefix))
+func newPrometheusStats(addr string, log *logger.Logger) *prometheus.Prometheus {
+	r := prometheus.New("")
 
 	if addr != "" {
 		mux := http.NewServeMux()
-		mux.Handle("/metrics", s.Handler())
+		mux.Handle("/metrics", r.Handler())
 		go func() {
-			if err := http.ListenAndServe(addr, mux); err != nil && errors.Is(err, http.ErrServerClosed) {
-				l.Error(err.Error())
+			if err := http.ListenAndServe(addr, mux); err != nil && !errors.Is(err, http.ErrServerClosed) {
+				log.Error(err.Error(), ctx.Str("server", "prometheus"))
 			}
 		}()
 	}
 
-	return s
+	return r
 }

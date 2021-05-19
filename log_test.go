@@ -4,8 +4,7 @@ import (
 	"testing"
 
 	"github.com/hamba/cmd"
-	"github.com/hamba/pkg/log"
-	"github.com/stretchr/testify/assert"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 )
 
@@ -15,63 +14,70 @@ func TestNewLogger(t *testing.T) {
 		lvl     string
 		format  string
 		tags    *cli.StringSlice
-		wantErr bool
+		wantErr require.ErrorAssertionFunc
 	}{
 		{
-			name:    "Json Format",
+			name:    "json format",
 			lvl:     "info",
 			format:  "json",
 			tags:    cli.NewStringSlice(),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "Logfmt Format",
+			name:    "logfmt format",
 			lvl:     "info",
 			format:  "logfmt",
 			tags:    cli.NewStringSlice(),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "No Format",
+			name:    "console format",
+			lvl:     "info",
+			format:  "console",
+			tags:    cli.NewStringSlice(),
+			wantErr: require.NoError,
+		},
+		{
+			name:    "no format",
 			lvl:     "",
 			format:  "json",
 			tags:    cli.NewStringSlice(),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "Invalid Format",
+			name:    "invalid format",
 			lvl:     "info",
 			format:  "invalid",
 			tags:    cli.NewStringSlice(),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "Valid Level",
+			name:    "valid Level",
 			lvl:     "info",
 			format:  "",
 			tags:    cli.NewStringSlice(),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "Invalid Level",
+			name:    "invalid Level",
 			lvl:     "invalid",
 			format:  "json",
 			tags:    cli.NewStringSlice(),
-			wantErr: true,
+			wantErr: require.Error,
 		},
 		{
-			name:    "Tags",
+			name:    "tags",
 			lvl:     "info",
 			format:  "json",
 			tags:    cli.NewStringSlice("a=b"),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "Invalid Tags",
+			name:    "invalid tags",
 			lvl:     "info",
 			format:  "json",
 			tags:    cli.NewStringSlice("single"),
-			wantErr: true,
+			wantErr: require.Error,
 		},
 	}
 
@@ -80,17 +86,11 @@ func TestNewLogger(t *testing.T) {
 			c, fs := newTestContext()
 			fs.String(cmd.FlagLogLevel, tt.lvl, "doc")
 			fs.String(cmd.FlagLogFormat, tt.format, "doc")
-			fs.Var(tt.tags, cmd.FlagLogTags, "doc")
+			fs.Var(tt.tags, cmd.FlagLogCtx, "doc")
 
-			l, err := cmd.NewLogger(c)
+			_, err := cmd.NewLogger(c)
 
-			if tt.wantErr {
-				assert.Error(t, err)
-				return
-			}
-
-			assert.NoError(t, err)
-			assert.Implements(t, (*log.Logger)(nil), l)
+			tt.wantErr(t, err)
 		})
 
 	}

@@ -2,14 +2,41 @@ package cmd
 
 import (
 	"os"
-	"time"
 
-	"github.com/hamba/logger"
+	"github.com/hamba/logger/v2"
+	"github.com/hamba/logger/v2/ctx"
 	"github.com/urfave/cli/v2"
 )
 
-// NewLogger creates a new logger.
-func NewLogger(c *cli.Context) (logger.Logger, error) {
+// Log flag constants declared for CLI use.
+const (
+	FlagLogFormat = "log.format"
+	FlagLogLevel  = "log.level"
+	FlagLogCtx    = "log.ctx"
+)
+
+// LogFlags are flags that configure logging.
+var LogFlags = Flags{
+	&cli.StringFlag{
+		Name:    FlagLogFormat,
+		Usage:   "Specify the format of logs. Supported formats: 'logfmt', 'json', 'console'",
+		EnvVars: []string{"LOG_FORMAT"},
+	},
+	&cli.StringFlag{
+		Name:    FlagLogLevel,
+		Value:   "info",
+		Usage:   "Specify the log level. e.g. 'debug', 'info', 'error'.",
+		EnvVars: []string{"LOG_LEVEL"},
+	},
+	&cli.StringSliceFlag{
+		Name:    FlagLogCtx,
+		Usage:   "A list of context field appended to every log. Format: key=value.",
+		EnvVars: []string{"LOG_CTX"},
+	},
+}
+
+// NewLogger returns a logger configured from the cli.
+func NewLogger(c *cli.Context) (*logger.Logger, error) {
 	str := c.String(FlagLogLevel)
 	if str == "" {
 		str = "info"
@@ -21,20 +48,18 @@ func NewLogger(c *cli.Context) (logger.Logger, error) {
 	}
 
 	fmtr := newLogFormatter(c)
-	h := logger.BufferedStreamHandler(os.Stdout, 2000, 1*time.Second, fmtr)
-	h = logger.LevelFilterHandler(lvl, h)
 
-	tags, err := SplitTags(c.StringSlice(FlagLogTags), "=")
+	tags, err := Split(c.StringSlice(FlagLogCtx), "=")
 	if err != nil {
 		return nil, err
 	}
 
-	ctx := make([]interface{}, len(tags))
+	fields := make([]logger.Field, len(tags))
 	for i, t := range tags {
-		ctx[i] = t
+		fields[i] = ctx.Str(t[0], t[1])
 	}
 
-	return logger.New(h, ctx...), nil
+	return logger.New(os.Stdout, fmtr, lvl).With(fields...), nil
 }
 
 func newLogFormatter(c *cli.Context) logger.Formatter {
