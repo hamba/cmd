@@ -27,7 +27,6 @@ func yourAction(c *cli.Context) error {
 	if err != nil {
 		// Handle error.
 	}
-	defer log.
 
 	stats, err := cmd.NewStatter(c, log)
 	if err != nil {
