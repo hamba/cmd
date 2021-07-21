@@ -33,7 +33,7 @@ func yourAction(c *cli.Context) error {
 		// Handle error.
 	}
 
-    tracer, err := cmd.NewTracer(c,
+    tracer, err := cmd.NewTracer(c, log,
         semconv.ServiceNameKey.String("my-service"),
         semconv.ServiceVersionKey.String("1.0.0"),
     )
@@ -131,7 +131,7 @@ Example: `--tracing.exporter=jaeger`
 
 This flag sets the endpoint the exporter should send traces to.
 
-Example: `--tracing.endpoint="host:port"` or `--tracing.endpoint="http://host:port/api/v2"`
+Example: `--tracing.endpoint="agent-host:port"` or `--tracing.endpoint="http://host:port/api/v2"`
 
 #### FlagTracingRatio: *--tracing.ratio, $TRACING_RATIO*
 

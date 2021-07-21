@@ -43,7 +43,13 @@ func ExampleNewStatter() {
 func ExampleNewTracer() {
 	var c *cli.Context // Get this from your action
 
-	tracer, err := cmd.NewTracer(c,
+	log, err := cmd.NewLogger(c)
+	if err != nil {
+		// Handle error.
+		return
+	}
+
+	tracer, err := cmd.NewTracer(c, log,
 		semconv.ServiceNameKey.String("my-service"),
 		semconv.ServiceVersionKey.String("1.0.0"),
 	)

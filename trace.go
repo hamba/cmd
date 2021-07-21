@@ -2,9 +2,12 @@ package cmd
 
 import (
 	"fmt"
-	"net/url"
+	"net"
 
+	"github.com/hamba/logger/v2"
+	"github.com/hamba/logger/v2/ctx"
 	"github.com/urfave/cli/v2"
+	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/trace/jaeger"
 	"go.opentelemetry.io/otel/exporters/trace/zipkin"
@@ -40,7 +43,9 @@ var TracingFlags = Flags{
 }
 
 // NewTracer returns a tracer configures from the cli.
-func NewTracer(c *cli.Context, resAttributes ...attribute.KeyValue) (*trace.TracerProvider, error) {
+func NewTracer(c *cli.Context, log *logger.Logger, resAttributes ...attribute.KeyValue) (*trace.TracerProvider, error) {
+	otel.SetErrorHandler(logErrorHandler{log: log})
+
 	exp, err := createExporter(c)
 	if err != nil {
 		return nil, err
@@ -69,17 +74,15 @@ func createExporter(c *cli.Context) (trace.SpanExporter, error) {
 	case "":
 		return nil, nil
 	case "jaeger":
-		uri, err := url.Parse(endpoint)
+		host, port, err := net.SplitHostPort(endpoint)
 		if err != nil {
 			return nil, err
 		}
 
-		pass, _ := uri.User.Password()
 		return jaeger.NewRawExporter(
-			jaeger.WithCollectorEndpoint(
-				jaeger.WithEndpoint(uri.Host),
-				jaeger.WithUsername(uri.User.Username()),
-				jaeger.WithPassword(pass),
+			jaeger.WithAgentEndpoint(
+				jaeger.WithAgentHost(host),
+				jaeger.WithAgentPort(port),
 			),
 		)
 	case "zipkin":
@@ -87,4 +90,15 @@ func createExporter(c *cli.Context) (trace.SpanExporter, error) {
 	default:
 		return nil, fmt.Errorf("unsupported tracing backend %q", backend)
 	}
+}
+
+type logErrorHandler struct {
+	log *logger.Logger
+}
+
+func (l logErrorHandler) Handle(err error) {
+	if err == nil {
+		return
+	}
+	l.log.Error(err.Error(), ctx.Str("component", "otel"))
 }
