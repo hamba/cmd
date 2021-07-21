@@ -16,7 +16,7 @@ This provides helpers on top of `github.com/urfave/cli`.
 Install with:
 
 ```shell
-go get github.com/hamba/cmd
+go get github.com/hamba/cmd/v2
 ```
 
 ## Example

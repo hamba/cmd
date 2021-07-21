@@ -5,7 +5,7 @@ import (
 	"flag"
 	"testing"
 
-	"github.com/hamba/cmd"
+	"github.com/hamba/cmd/v2"
 	"github.com/stretchr/testify/assert"
 	"github.com/urfave/cli/v2"
 )

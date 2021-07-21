@@ -3,7 +3,7 @@ package cmd_test
 import (
 	"testing"
 
-	"github.com/hamba/cmd"
+	"github.com/hamba/cmd/v2"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 )

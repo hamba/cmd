@@ -4,7 +4,7 @@ import (
 	"io"
 	"testing"
 
-	"github.com/hamba/cmd"
+	"github.com/hamba/cmd/v2"
 	"github.com/hamba/logger/v2"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/otel/semconv"
