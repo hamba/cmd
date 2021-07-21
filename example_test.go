@@ -4,7 +4,7 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/hamba/cmd"
+	"github.com/hamba/cmd/v2"
 	"github.com/urfave/cli/v2"
 	"go.opentelemetry.io/otel/semconv"
 )

@@ -1,4 +1,4 @@
-module github.com/hamba/cmd
+module github.com/hamba/cmd/v2
 
 go 1.12
 
