@@ -1,9 +1,11 @@
 package cmd_test
 
 import (
+	"io"
 	"testing"
 
 	"github.com/hamba/cmd"
+	"github.com/hamba/logger/v2"
 	"github.com/stretchr/testify/require"
 	"go.opentelemetry.io/otel/semconv"
 )
@@ -33,7 +35,7 @@ func TestNewTracer(t *testing.T) {
 		{
 			name:    "jaeger invalid endpoint",
 			exporter: "jaeger",
-			endpoint: "//:\n",
+			endpoint: "localhost",
 			ratio:    1.0,
 			wantErr: require.Error,
 		},
@@ -77,7 +79,9 @@ func TestNewTracer(t *testing.T) {
 			fs.String(cmd.FlagTracingEndpoint, test.endpoint, "doc")
 			fs.Float64(cmd.FlagTracingRatio, test.ratio, "doc")
 
-			_, err := cmd.NewTracer(c,
+			log := logger.New(io.Discard, logger.LogfmtFormat(), logger.Error)
+
+			_, err := cmd.NewTracer(c, log,
 				semconv.ServiceNameKey.String("my-service"),
 				semconv.ServiceVersionKey.String("1.0.0"),
 			)
