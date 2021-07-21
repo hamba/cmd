@@ -1,12 +1,13 @@
 package cmd_test
 
 import (
+	"io"
 	"testing"
+	"time"
 
 	"github.com/hamba/cmd"
-	"github.com/hamba/pkg/log"
-	"github.com/hamba/pkg/stats"
-	"github.com/stretchr/testify/assert"
+	"github.com/hamba/logger/v2"
+	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
 )
 
@@ -16,96 +17,96 @@ func TestNewStats(t *testing.T) {
 		dsn     string
 		prefix  string
 		tags    *cli.StringSlice
-		wantErr bool
+		wantErr require.ErrorAssertionFunc
 	}{
 		{
-			name:    "No Stats",
+			name:    "no stats",
 			dsn:     "",
 			prefix:  "test",
 			tags:    cli.NewStringSlice(),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "Statsd",
-			dsn:     "statsd://localhost:8125",
+			name:    "statsd",
+			dsn:     "statsd://localhost:8125?flushBytes=1423&flushInterval=10s",
 			prefix:  "test",
 			tags:    cli.NewStringSlice(),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "L2met",
+			name:    "l2met",
 			dsn:     "l2met://",
 			prefix:  "test",
 			tags:    cli.NewStringSlice(),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "Prometheus",
+			name:    "prometheus",
 			dsn:     "prometheus://",
 			prefix:  "test",
 			tags:    cli.NewStringSlice(),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "Prometheus With Server",
+			name:    "prometheus with server",
 			dsn:     "prometheus://:51234",
 			prefix:  "test",
 			tags:    cli.NewStringSlice(),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "Unknown Stats",
+			name:    "unknown stats scheme",
 			dsn:     "unknownscheme://",
 			prefix:  "",
 			tags:    cli.NewStringSlice(),
-			wantErr: true,
+			wantErr: require.Error,
 		},
 		{
-			name:    "Invalid DSN",
+			name:    "invalid DSN",
 			dsn:     "://",
 			prefix:  "",
 			tags:    cli.NewStringSlice(),
-			wantErr: true,
+			wantErr: require.Error,
 		},
 		{
-			name:    "No Prefix",
+			name:    "no prefix",
 			dsn:     "l2met://",
 			prefix:  "",
 			tags:    cli.NewStringSlice(),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "Tags",
+			name:    "tags",
 			dsn:     "l2met://",
 			prefix:  "",
 			tags:    cli.NewStringSlice("a=b"),
-			wantErr: false,
+			wantErr: require.NoError,
 		},
 		{
-			name:    "Invalid Tags",
+			name:    "invalid tags",
 			dsn:     "l2met://",
 			prefix:  "",
 			tags:    cli.NewStringSlice("a"),
-			wantErr: true,
+			wantErr: require.Error,
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
+	for _, test := range tests {
+		test := test
+		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
 			c, fs := newTestContext()
-			fs.String(cmd.FlagStatsDSN, tt.dsn, "doc")
-			fs.String(cmd.FlagStatsPrefix, tt.prefix, "doc")
-			fs.Var(tt.tags, cmd.FlagStatsTags, "doc")
+			fs.String(cmd.FlagStatsDSN, test.dsn, "doc")
+			fs.Duration(cmd.FlagStatsInterval, time.Second, "doc")
+			fs.String(cmd.FlagStatsPrefix, test.prefix, "doc")
+			fs.Var(test.tags, cmd.FlagStatsTags, "doc")
 
-			s, err := cmd.NewStats(c, log.Null)
+			log := logger.New(io.Discard, logger.LogfmtFormat(), logger.Error)
 
-			if tt.wantErr {
-				assert.Error(t, err)
-				return
-			}
+			_, err := cmd.NewStatter(c, log)
 
-			assert.NoError(t, err)
-			assert.Implements(t, (*stats.Statter)(nil), s)
+			test.wantErr(t, err)
 		})
 	}
 }

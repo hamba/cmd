@@ -1,38 +1,75 @@
 package cmd_test
 
 import (
+	"context"
 	"fmt"
 
 	"github.com/hamba/cmd"
 	"github.com/urfave/cli/v2"
+	"go.opentelemetry.io/otel/semconv"
 )
 
-func ExampleNewContext() {
+func ExampleNewLogger() {
 	var c *cli.Context // Get this from your action
 
-	ctx, err := cmd.NewContext(c)
+	log, err := cmd.NewLogger(c)
 	if err != nil {
-		// Handle error
+		// Handle error.
+		return
 	}
 
-	ctx.Logger()  // Get your logger
-	ctx.Statter() // Get your statter
-
-	<-cmd.WaitForSignals()
+	_ = log
 }
 
-func ExampleSplitTags() {
+func ExampleNewStatter() {
+	var c *cli.Context // Get this from your action
+
+	log, err := cmd.NewLogger(c)
+	if err != nil {
+		// Handle error.
+		return
+	}
+
+	stats, err := cmd.NewStatter(c, log)
+	if err != nil {
+		// Handle error.
+		return
+	}
+	defer stats.Close()
+
+	_ = stats
+}
+
+func ExampleNewTracer() {
+	var c *cli.Context // Get this from your action
+
+	log, err := cmd.NewLogger(c)
+	if err != nil {
+		// Handle error.
+		return
+	}
+
+	tracer, err := cmd.NewTracer(c, log,
+		semconv.ServiceNameKey.String("my-service"),
+		semconv.ServiceVersionKey.String("1.0.0"),
+	)
+	if err != nil {
+		// Handle error.
+		return
+	}
+	defer tracer.Shutdown(context.Background())
+
+	_ = tracer
+}
+
+func ExampleSplit() {
 	input := []string{"a=b", "foo=bar"} // Usually from a cli.StringSlice
 
-	tags, err := cmd.SplitTags(input, "=")
+	tags, err := cmd.Split(input, "=")
 	if err != nil {
 		// Handle error
 	}
 
 	fmt.Println(tags)
-	// Output: [a b foo bar]
-}
-
-func ExampleWaitForSignals() {
-	<-cmd.WaitForSignals() // Will wait for SIGTERM or SIGINT
+	// Output: [[a b] [foo bar]]
 }
