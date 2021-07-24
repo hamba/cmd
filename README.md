@@ -3,7 +3,7 @@
 [![Go Report Card](https://goreportcard.com/badge/github.com/hamba/cmd)](https://goreportcard.com/report/github.com/hamba/cmd)
 [![Build Status](https://github.com/hamba/cmd/actions/workflows/test.yml/badge.svg)](https://github.com/hamba/cmd/actions)
 [![Coverage Status](https://coveralls.io/repos/github/hamba/cmd/badge.svg?branch=master)](https://coveralls.io/github/hamba/cmd?branch=master)
-[![GoDoc](https://godoc.org/github.com/hamba/cmd?status.svg)](https://godoc.org/github.com/hamba/cmd)
+[![Go Reference](https://pkg.go.dev/badge/github.com/hamba/cmd/v2.svg)](https://pkg.go.dev/github.com/hamba/cmd/v2)
 [![GitHub release](https://img.shields.io/github/release/hamba/cmd.svg)](https://github.com/hamba/cmd/releases)
 [![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://raw.githubusercontent.com/hamba/cmd/master/LICENSE)
 
