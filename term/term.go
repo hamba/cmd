@@ -84,12 +84,12 @@ func (p Prefixed) Error(msg string) {
 // Predefined colors for use with Coloured.
 var (
 	Blue   = color.New(color.FgHiBlue)
-	Red    = color.New(color.BgHiRed)
-	Cyan   = color.New(color.BgHiCyan)
-	Green  = color.New(color.BgHiGreen)
-	Black  = color.New(color.BgHiBlack)
-	Yellow = color.New(color.BgHiYellow)
-	White  = color.New(color.BgHiWhite)
+	Red    = color.New(color.FgHiRed)
+	Cyan   = color.New(color.FgHiCyan)
+	Green  = color.New(color.FgHiGreen)
+	Black  = color.New(color.FgHiBlack)
+	Yellow = color.New(color.FgHiYellow)
+	White  = color.New(color.FgHiWhite)
 )
 
 // Colored writer coloured messages to the underlying term.
