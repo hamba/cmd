@@ -6,7 +6,7 @@ import (
 
 	"github.com/hamba/cmd/v2"
 	"github.com/urfave/cli/v2"
-	"go.opentelemetry.io/otel/semconv"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 )
 
 func ExampleNewLogger() {

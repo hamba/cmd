@@ -7,7 +7,7 @@ import (
 	"github.com/hamba/cmd/v2"
 	"github.com/hamba/logger/v2"
 	"github.com/stretchr/testify/require"
-	"go.opentelemetry.io/otel/semconv"
+	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 )
 
 func TestNewTracer(t *testing.T) {
