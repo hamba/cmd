@@ -9,8 +9,8 @@ import (
 	"github.com/urfave/cli/v2"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/trace/jaeger"
-	"go.opentelemetry.io/otel/exporters/trace/zipkin"
+	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/exporters/zipkin"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
 )
@@ -61,7 +61,7 @@ func NewTracer(c *cli.Context, log *logger.Logger, resAttributes ...attribute.Ke
 
 	return trace.NewTracerProvider(
 		trace.WithSampler(sampler),
-		trace.WithResource(resource.NewWithAttributes(resAttributes...)),
+		trace.WithResource(resource.NewSchemaless(resAttributes...)),
 		trace.WithSpanProcessor(proc),
 	), nil
 }
@@ -79,14 +79,14 @@ func createExporter(c *cli.Context) (trace.SpanExporter, error) {
 			return nil, err
 		}
 
-		return jaeger.NewRawExporter(
+		return jaeger.New(
 			jaeger.WithAgentEndpoint(
 				jaeger.WithAgentHost(host),
 				jaeger.WithAgentPort(port),
 			),
 		)
 	case "zipkin":
-		return zipkin.NewRawExporter(endpoint)
+		return zipkin.New(endpoint)
 	default:
 		return nil, fmt.Errorf("unsupported tracing backend %q", backend)
 	}
