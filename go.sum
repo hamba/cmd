@@ -160,8 +160,8 @@ github.com/valyala/fastrand v1.0.0/go.mod h1:HWqCzkrkg6QXT8V2EXWvXCoow7vLwOFN002
 go.opentelemetry.io/otel v1.0.1/go.mod h1:OPEOD4jIT2SlZPMmwT6FqZz2C0ZNdQqiWcoK6M0SNFU=
 go.opentelemetry.io/otel v1.1.0 h1:8p0uMLcyyIx0KHNTgO8o3CW8A1aA+dJZJW6PvnMz0Wc=
 go.opentelemetry.io/otel v1.1.0/go.mod h1:7cww0OW51jQ8IaZChIEdqLwgh+44+7uiTdWsAL0wQpA=
-go.opentelemetry.io/otel/exporters/jaeger v1.0.1 h1:fg9udWIWWJMAT+Gq2ATFd/DFy3OZvKEZy9VK2amxvkw=
-go.opentelemetry.io/otel/exporters/jaeger v1.0.1/go.mod h1:85Ym3qknJdIdfRzYS9Ofy9NeLi9gKPFzFDBEHCKpfXI=
+go.opentelemetry.io/otel/exporters/jaeger v1.1.0 h1:VRF+Hf3EePFO6ab7/wfPoyWzSY4z5X0tTvQtV9/Mq8Y=
+go.opentelemetry.io/otel/exporters/jaeger v1.1.0/go.mod h1:D/GIBwAdrFTTqCy1iITpC9nh5rgJpIbFVgkhlz2vCXk=
 go.opentelemetry.io/otel/exporters/zipkin v1.0.1 h1:Li6OvM1Po5qrP+HnXlZa+FyLkMun7JG4R0vTAch12qs=
 go.opentelemetry.io/otel/exporters/zipkin v1.0.1/go.mod h1:KXb2W6IVINSd/rKugSARqP3TsByxngvea3B1vm5ju74=
 go.opentelemetry.io/otel/sdk v1.0.1/go.mod h1:HrdXne+BiwsOHYYkBE5ysIcv2bvdZstxzmCQhxTcZkI=
