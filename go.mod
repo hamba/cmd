@@ -9,7 +9,7 @@ require (
 	github.com/stretchr/testify v1.7.0
 	github.com/urfave/cli/v2 v2.3.0
 	go.opentelemetry.io/otel v1.2.0
-	go.opentelemetry.io/otel/exporters/jaeger v1.1.0
-	go.opentelemetry.io/otel/exporters/zipkin v1.1.0
-	go.opentelemetry.io/otel/sdk v1.1.0
+	go.opentelemetry.io/otel/exporters/jaeger v1.2.0
+	go.opentelemetry.io/otel/exporters/zipkin v1.2.0
+	go.opentelemetry.io/otel/sdk v1.2.0
 )
