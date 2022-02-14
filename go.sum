@@ -207,8 +207,8 @@ github.com/yuin/goldmark v1.2.1/go.mod h1:3hX8gzYuyVAZsxl0MRgGTJEmQBFcNTphYh9dec
 go.opentelemetry.io/otel v1.3.0/go.mod h1:PWIKzi6JCp7sM0k9yZ43VX+T345uNbAkDKwHVjb2PTs=
 go.opentelemetry.io/otel v1.4.0 h1:7ESuKPq6zpjRaY5nvVDGiuwK7VAJ8MwkKnmNJ9whNZ4=
 go.opentelemetry.io/otel v1.4.0/go.mod h1:jeAqMFKy2uLIxCtKxoFj0FAL5zAPKQagc3+GtBWakzk=
-go.opentelemetry.io/otel/exporters/jaeger v1.3.0 h1:HfydzioALdtcB26H5WHc4K47iTETJCdloL7VN579/L0=
-go.opentelemetry.io/otel/exporters/jaeger v1.3.0/go.mod h1:KoYHi1BtkUPncGSRtCe/eh1ijsnePhSkxwzz07vU0Fc=
+go.opentelemetry.io/otel/exporters/jaeger v1.4.0 h1:EX/spHhVkHbobTeSozT1zpbuc3oO70CISkw+dspgR9M=
+go.opentelemetry.io/otel/exporters/jaeger v1.4.0/go.mod h1:C4UfuVfyi7qAk/PAz6QodaEkES7RnLNHeAAj6QOu2gI=
 go.opentelemetry.io/otel/exporters/zipkin v1.3.0 h1:uOD28dZ7yIKITTcUS6MeAGNHYy3uhP7DTkhcJM6onlQ=
 go.opentelemetry.io/otel/exporters/zipkin v1.3.0/go.mod h1:LxGGfHIYbvsFnrJtBcazb0yG24xHdDGrT/H6RB9r3+8=
 go.opentelemetry.io/otel/sdk v1.3.0/go.mod h1:rIo4suHNhQwBIPg9axF8V9CA72Wz2mKF1teNrup8yzs=
