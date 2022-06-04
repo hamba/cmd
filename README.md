@@ -91,7 +91,21 @@ be sent to the Statsd server.
 
 `--stats.dsn="prometheus://host:port"`
 
+or
+
+`--stats.dsn="prom://host:port"`
+
 The `host` and `port` are optional. If set they will start a prometheus http server on the specified host and port.
+
+**Victoria Metrics:**
+
+`--stats.dsn="victoriametrics://host:port"`
+
+or
+
+`--stats.dsn="vm://host:port"`
+
+The `host` and `port` are optional. If set they will start a victoria metrics http server on the specified host and port.
 
 **l2met:**
 

@@ -14,6 +14,7 @@ import (
 	"github.com/hamba/statter/v2/reporter/l2met"
 	"github.com/hamba/statter/v2/reporter/prometheus"
 	"github.com/hamba/statter/v2/reporter/statsd"
+	"github.com/hamba/statter/v2/reporter/victoriametrics"
 	"github.com/urfave/cli/v2"
 )
 
@@ -95,8 +96,10 @@ func createReporter(c *cli.Context, log *logger.Logger) (statter.Reporter, error
 		return newStatsd(uri.Host, uri.Query())
 	case "l2met":
 		return l2met.New(log, ""), nil
-	case "prometheus":
+	case "prometheus", "prom":
 		return newPrometheusStats(uri.Host, log), nil
+	case "victoriametrics", "vm":
+		return newVictoriaMetricsStats(uri.Host, log), nil
 	default:
 		return nil, fmt.Errorf("unsupported stats reporter: %s", uri.Scheme)
 	}
@@ -129,6 +132,22 @@ func newPrometheusStats(addr string, log *logger.Logger) *prometheus.Prometheus 
 		go func() {
 			if err := http.ListenAndServe(addr, mux); err != nil && !errors.Is(err, http.ErrServerClosed) {
 				log.Error(err.Error(), ctx.Str("server", "prometheus"))
+			}
+		}()
+	}
+
+	return r
+}
+
+func newVictoriaMetricsStats(addr string, log *logger.Logger) *victoriametrics.VictoriaMetrics {
+	r := victoriametrics.New()
+
+	if addr != "" {
+		mux := http.NewServeMux()
+		mux.Handle("/metrics", r.Handler())
+		go func() {
+			if err := http.ListenAndServe(addr, mux); err != nil && !errors.Is(err, http.ErrServerClosed) {
+				log.Error(err.Error(), ctx.Str("server", "victoria-metrics"))
 			}
 		}()
 	}
