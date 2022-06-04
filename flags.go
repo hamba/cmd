@@ -22,6 +22,7 @@ func (f Flags) Merge(flags ...Flags) Flags {
 }
 
 // ServerFlags are flags that configure a server.
+// Deprecated: There is no standardisation around this. It is preferred to make your own flag.
 var ServerFlags = Flags{
 	&cli.StringFlag{
 		Name:    FlagPort,
