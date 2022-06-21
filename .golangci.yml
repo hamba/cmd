@@ -18,6 +18,7 @@ linters:
     - golint # deprecated
     - exhaustive
     - exhaustivestruct
+    - exhaustruct
     - forcetypeassert
     - gochecknoglobals
     - gochecknoinits
