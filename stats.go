@@ -130,7 +130,15 @@ func newPrometheusStats(addr string, log *logger.Logger) *prometheus.Prometheus 
 		mux := http.NewServeMux()
 		mux.Handle("/metrics", r.Handler())
 		go func() {
-			if err := http.ListenAndServe(addr, mux); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			srv := http.Server{
+				Addr:              addr,
+				Handler:           mux,
+				ReadHeaderTimeout: time.Second,
+				ReadTimeout:       10 * time.Second,
+				WriteTimeout:      10 * time.Second,
+				IdleTimeout:       120 * time.Second,
+			}
+			if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 				log.Error(err.Error(), ctx.Str("server", "prometheus"))
 			}
 		}()
@@ -146,7 +154,15 @@ func newVictoriaMetricsStats(addr string, log *logger.Logger) *victoriametrics.V
 		mux := http.NewServeMux()
 		mux.Handle("/metrics", r.Handler())
 		go func() {
-			if err := http.ListenAndServe(addr, mux); err != nil && !errors.Is(err, http.ErrServerClosed) {
+			srv := http.Server{
+				Addr:              addr,
+				Handler:           mux,
+				ReadHeaderTimeout: time.Second,
+				ReadTimeout:       10 * time.Second,
+				WriteTimeout:      10 * time.Second,
+				IdleTimeout:       120 * time.Second,
+			}
+			if err := srv.ListenAndServe(); err != nil && !errors.Is(err, http.ErrServerClosed) {
 				log.Error(err.Error(), ctx.Str("server", "victoria-metrics"))
 			}
 		}()
