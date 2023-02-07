@@ -26,12 +26,12 @@ func TestSplit(t *testing.T) {
 		{
 			name:    "invalid input",
 			input:   []string{"a"},
-			wantErr: errors.New("string \"a\" does not contain separator"),
+			wantErr: errors.New("string \"a\" does not contain \"=\""),
 		},
 		{
 			name:    "mixed invalid input",
 			input:   []string{"a=b", "c"},
-			wantErr: errors.New("string \"c\" does not contain separator"),
+			wantErr: errors.New("string \"c\" does not contain \"=\""),
 		},
 	}
 

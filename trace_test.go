@@ -7,6 +7,7 @@ import (
 	"github.com/hamba/cmd/v2"
 	"github.com/hamba/logger/v2"
 	"github.com/stretchr/testify/require"
+	"github.com/urfave/cli/v2"
 	semconv "go.opentelemetry.io/otel/semconv/v1.4.0"
 )
 
@@ -15,6 +16,7 @@ func TestNewTracer(t *testing.T) {
 		name     string
 		exporter string
 		endpoint string
+		tags     []string
 		ratio    float64
 		wantErr  require.ErrorAssertionFunc
 	}{
@@ -43,6 +45,14 @@ func TestNewTracer(t *testing.T) {
 			name:     "zipkin",
 			exporter: "zipkin",
 			endpoint: "http://localhost:1234/api/v2",
+			ratio:    1.0,
+			wantErr:  require.NoError,
+		},
+		{
+			name:     "with tags",
+			exporter: "jaeger",
+			endpoint: "localhost:1234",
+			tags:     []string{"cluster=test", "namespace=num"},
 			ratio:    1.0,
 			wantErr:  require.NoError,
 		},
@@ -77,6 +87,7 @@ func TestNewTracer(t *testing.T) {
 			c, fs := newTestContext()
 			fs.String(cmd.FlagTracingExporter, test.exporter, "doc")
 			fs.String(cmd.FlagTracingEndpoint, test.endpoint, "doc")
+			fs.Var(cli.NewStringSlice(test.tags...), cmd.FlagTracingTags, "doc")
 			fs.Float64(cmd.FlagTracingRatio, test.ratio, "doc")
 
 			log := logger.New(io.Discard, logger.LogfmtFormat(), logger.Error)
