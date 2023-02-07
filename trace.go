@@ -19,6 +19,7 @@ import (
 const (
 	FlagTracingExporter = "tracing.exporter"
 	FlagTracingEndpoint = "tracing.endpoint"
+	FlagTracingTags     = "tracing.tags"
 	FlagTracingRatio    = "tracing.ratio"
 )
 
@@ -33,6 +34,11 @@ var TracingFlags = Flags{
 		Name:    FlagTracingEndpoint,
 		Usage:   "The tracing backend endpoint.",
 		EnvVars: []string{"TRACING_ENDPOINT"},
+	},
+	&cli.StringSliceFlag{
+		Name:    FlagTracingTags,
+		Usage:   "A list of tags appended to every trace. Format: key=value.",
+		EnvVars: []string{"TRACING_TAGS"},
 	},
 	&cli.Float64Flag{
 		Name:    FlagTracingRatio,
@@ -59,9 +65,20 @@ func NewTracer(c *cli.Context, log *logger.Logger, resAttributes ...attribute.Ke
 	ratio := c.Float64(FlagTracingRatio)
 	sampler := trace.ParentBased(trace.TraceIDRatioBased(ratio))
 
+	attrs := resAttributes
+	if tags := c.StringSlice(FlagTracingTags); len(tags) > 0 {
+		strTags, err := Split(tags, "=")
+		if err != nil {
+			return nil, err
+		}
+		for _, kv := range strTags {
+			attrs = append(attrs, attribute.Key(kv[0]).String(kv[1]))
+		}
+	}
+
 	return trace.NewTracerProvider(
 		trace.WithSampler(sampler),
-		trace.WithResource(resource.NewSchemaless(resAttributes...)),
+		trace.WithResource(resource.NewSchemaless(attrs...)),
 		trace.WithSpanProcessor(proc),
 	), nil
 }
