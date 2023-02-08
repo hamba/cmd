@@ -13,6 +13,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/zipkin"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
+	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 )
 
 // Tracing flag constants declared for CLI use.
@@ -72,13 +73,13 @@ func NewTracer(c *cli.Context, log *logger.Logger, resAttributes ...attribute.Ke
 			return nil, err
 		}
 		for _, kv := range strTags {
-			attrs = append(attrs, attribute.Key(kv[0]).String(kv[1]))
+			attrs = append(attrs, attribute.String(kv[0], kv[1]))
 		}
 	}
 
 	return trace.NewTracerProvider(
 		trace.WithSampler(sampler),
-		trace.WithResource(resource.NewSchemaless(attrs...)),
+		trace.WithResource(resource.NewWithAttributes(semconv.SchemaURL, attrs...)),
 		trace.WithSpanProcessor(proc),
 	), nil
 }
