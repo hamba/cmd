@@ -7,7 +7,7 @@ require (
 	github.com/hamba/logger/v2 v2.4.0
 	github.com/hamba/statter/v2 v2.3.2
 	github.com/stretchr/testify v1.8.2
-	github.com/urfave/cli/v2 v2.25.0
+	github.com/urfave/cli/v2 v2.25.1
 	go.opentelemetry.io/otel v1.14.0
 	go.opentelemetry.io/otel/exporters/jaeger v1.14.0
 	go.opentelemetry.io/otel/exporters/zipkin v1.14.0
