@@ -52,7 +52,7 @@ var StatsFlags = Flags{
 }
 
 // NewStatter returns a statter configured from the cli.
-func NewStatter(c *cli.Context, log *logger.Logger) (*statter.Statter, error) {
+func NewStatter(c *cli.Context, log *logger.Logger, opts ...statter.Option) (*statter.Statter, error) {
 	r, err := createReporter(c, log)
 	if err != nil {
 		return nil, err
@@ -64,7 +64,9 @@ func NewStatter(c *cli.Context, log *logger.Logger) (*statter.Statter, error) {
 		return nil, err
 	}
 
-	return statter.New(r, intv).With(prefix, tags...), nil
+	opts = append(opts, statter.WithPrefix(prefix), statter.WithTags(tags...))
+
+	return statter.New(r, intv, opts...), nil
 }
 
 func statsWith(c *cli.Context) (string, []statter.Tag, error) {
