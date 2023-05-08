@@ -8,10 +8,10 @@ require (
 	github.com/hamba/statter/v2 v2.3.3
 	github.com/stretchr/testify v1.8.2
 	github.com/urfave/cli/v2 v2.25.1
-	go.opentelemetry.io/otel v1.15.0
+	go.opentelemetry.io/otel v1.15.1
 	go.opentelemetry.io/otel/exporters/jaeger v1.15.0
-	go.opentelemetry.io/otel/exporters/zipkin v1.15.0
-	go.opentelemetry.io/otel/sdk v1.15.0
+	go.opentelemetry.io/otel/exporters/zipkin v1.15.1
+	go.opentelemetry.io/otel/sdk v1.15.1
 )
 
 require (
@@ -39,7 +39,7 @@ require (
 	github.com/valyala/fastrand v1.1.0 // indirect
 	github.com/valyala/histogram v1.2.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
-	go.opentelemetry.io/otel/trace v1.15.0 // indirect
+	go.opentelemetry.io/otel/trace v1.15.1 // indirect
 	golang.org/x/sys v0.7.0 // indirect
 	google.golang.org/protobuf v1.30.0 // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
