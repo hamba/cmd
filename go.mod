@@ -6,7 +6,7 @@ require (
 	github.com/fatih/color v1.15.0
 	github.com/hamba/logger/v2 v2.4.0
 	github.com/hamba/statter/v2 v2.3.3
-	github.com/stretchr/testify v1.8.2
+	github.com/stretchr/testify v1.8.3
 	github.com/urfave/cli/v2 v2.25.3
 	go.opentelemetry.io/otel v1.15.1
 	go.opentelemetry.io/otel/exporters/jaeger v1.15.1
