@@ -1,11 +1,11 @@
 module github.com/hamba/cmd/v2
 
-go 1.19
+go 1.20
 
 require (
 	github.com/fatih/color v1.15.0
-	github.com/hamba/logger/v2 v2.4.0
-	github.com/hamba/statter/v2 v2.3.3
+	github.com/hamba/logger/v2 v2.5.0
+	github.com/hamba/statter/v2 v2.3.4
 	github.com/stretchr/testify v1.8.4
 	github.com/urfave/cli/v2 v2.25.7
 	go.opentelemetry.io/otel v1.17.0
@@ -19,7 +19,7 @@ require (
 require (
 	github.com/VictoriaMetrics/metrics v1.24.0 // indirect
 	github.com/beorn7/perks v1.0.1 // indirect
-	github.com/cactus/go-statsd-client/v5 v5.0.0 // indirect
+	github.com/cactus/go-statsd-client/v5 v5.1.0 // indirect
 	github.com/cenkalti/backoff/v4 v4.2.1 // indirect
 	github.com/cespare/xxhash/v2 v2.2.0 // indirect
 	github.com/cpuguy83/go-md2man/v2 v2.0.2 // indirect
@@ -34,10 +34,10 @@ require (
 	github.com/matttproud/golang_protobuf_extensions v1.0.4 // indirect
 	github.com/openzipkin/zipkin-go v0.4.2 // indirect
 	github.com/pmezard/go-difflib v1.0.0 // indirect
-	github.com/prometheus/client_golang v1.15.1 // indirect
+	github.com/prometheus/client_golang v1.16.0 // indirect
 	github.com/prometheus/client_model v0.4.0 // indirect
 	github.com/prometheus/common v0.44.0 // indirect
-	github.com/prometheus/procfs v0.10.1 // indirect
+	github.com/prometheus/procfs v0.11.1 // indirect
 	github.com/russross/blackfriday/v2 v2.1.0 // indirect
 	github.com/stretchr/objx v0.5.0 // indirect
 	github.com/valyala/fastrand v1.1.0 // indirect

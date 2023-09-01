@@ -4,9 +4,6 @@ import (
 	"github.com/urfave/cli/v2"
 )
 
-// FlagPort contains the flag name for a server port.
-const FlagPort = "port"
-
 // Flags represents a set of CLI flags.
 type Flags []cli.Flag
 
@@ -19,17 +16,6 @@ func (f Flags) Merge(flags ...Flags) Flags {
 	}
 
 	return m
-}
-
-// ServerFlags are flags that configure a server.
-// Deprecated: There is no standardisation around this. It is preferred to make your own flag.
-var ServerFlags = Flags{
-	&cli.StringFlag{
-		Name:    FlagPort,
-		Value:   "80",
-		Usage:   "Port for HTTP server to listen on",
-		EnvVars: []string{"PORT"},
-	},
 }
 
 // MonitoringFlags are flags that configure logging, stats and tracing.
