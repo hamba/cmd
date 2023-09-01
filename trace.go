@@ -10,6 +10,8 @@ import (
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/jaeger"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
+	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/exporters/zipkin"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
@@ -18,23 +20,29 @@ import (
 
 // Tracing flag constants declared for CLI use.
 const (
-	FlagTracingExporter = "tracing.exporter"
-	FlagTracingEndpoint = "tracing.endpoint"
-	FlagTracingTags     = "tracing.tags"
-	FlagTracingRatio    = "tracing.ratio"
+	FlagTracingExporter         = "tracing.exporter"
+	FlagTracingEndpoint         = "tracing.endpoint"
+	FlagTracingEndpointInsecure = "tracing.endpoint-insecure"
+	FlagTracingTags             = "tracing.tags"
+	FlagTracingRatio            = "tracing.ratio"
 )
 
 // TracingFlags are flags that configure tracing.
 var TracingFlags = Flags{
 	&cli.StringFlag{
 		Name:    FlagTracingExporter,
-		Usage:   "The tracing backend. Supported: 'jaeger', 'zipkin'.",
+		Usage:   "The tracing backend. Supported: 'zipkin', 'otlphttp', 'otlpgrpc. Depreciated: 'jaeger'",
 		EnvVars: []string{"TRACING_EXPORTER"},
 	},
 	&cli.StringFlag{
 		Name:    FlagTracingEndpoint,
 		Usage:   "The tracing backend endpoint.",
 		EnvVars: []string{"TRACING_ENDPOINT"},
+	},
+	&cli.BoolFlag{
+		Name:    FlagTracingEndpointInsecure,
+		Usage:   "Determines if the endpoint is insecure.",
+		EnvVars: []string{"TRACING_ENDPOINT_INSECURE"},
 	},
 	&cli.StringSliceFlag{
 		Name:    FlagTracingTags,
@@ -105,6 +113,18 @@ func createExporter(c *cli.Context) (trace.SpanExporter, error) {
 		)
 	case "zipkin":
 		return zipkin.New(endpoint)
+	case "otlphttp":
+		opts := []otlptracehttp.Option{otlptracehttp.WithEndpoint(endpoint)}
+		if c.Bool(FlagTracingEndpointInsecure) {
+			opts = append(opts, otlptracehttp.WithInsecure())
+		}
+		return otlptracehttp.New(c.Context, opts...)
+	case "otlpgrpc":
+		opts := []otlptracegrpc.Option{otlptracegrpc.WithEndpoint(endpoint)}
+		if c.Bool(FlagTracingEndpointInsecure) {
+			opts = append(opts, otlptracegrpc.WithInsecure())
+		}
+		return otlptracegrpc.New(c.Context, opts...)
 	default:
 		return nil, fmt.Errorf("unsupported tracing backend %q", backend)
 	}
