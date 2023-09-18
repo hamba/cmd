@@ -8,7 +8,7 @@ import (
 	"github.com/hamba/logger/v2"
 	"github.com/stretchr/testify/require"
 	"github.com/urfave/cli/v2"
-	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.18.0"
 )
 
 func TestNewTracer(t *testing.T) {
@@ -28,20 +28,6 @@ func TestNewTracer(t *testing.T) {
 			wantErr:  require.NoError,
 		},
 		{
-			name:     "jaeger",
-			exporter: "jaeger",
-			endpoint: "localhost:1234",
-			ratio:    1.0,
-			wantErr:  require.NoError,
-		},
-		{
-			name:     "jaeger invalid endpoint",
-			exporter: "jaeger",
-			endpoint: "localhost",
-			ratio:    1.0,
-			wantErr:  require.Error,
-		},
-		{
 			name:     "zipkin",
 			exporter: "zipkin",
 			endpoint: "http://localhost:1234/api/v2",
@@ -50,7 +36,7 @@ func TestNewTracer(t *testing.T) {
 		},
 		{
 			name:     "with tags",
-			exporter: "jaeger",
+			exporter: "otlphttp",
 			endpoint: "localhost:1234",
 			tags:     []string{"cluster=test", "namespace=num"},
 			ratio:    1.0,
@@ -65,14 +51,14 @@ func TestNewTracer(t *testing.T) {
 		},
 		{
 			name:     "ratio too low",
-			exporter: "jaeger",
+			exporter: "otlpgrpc",
 			endpoint: "localhost:1234",
 			ratio:    -1.0,
 			wantErr:  require.NoError,
 		},
 		{
 			name:     "ratio too high",
-			exporter: "jaeger",
+			exporter: "otlpgrpc",
 			endpoint: "localhost:1234",
 			ratio:    2.0,
 			wantErr:  require.NoError,
