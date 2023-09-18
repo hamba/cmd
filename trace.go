@@ -2,14 +2,12 @@ package cmd
 
 import (
 	"fmt"
-	"net"
 
 	"github.com/hamba/logger/v2"
 	"github.com/hamba/logger/v2/ctx"
 	"github.com/urfave/cli/v2"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	"go.opentelemetry.io/otel/exporters/jaeger" //nolint:staticcheck
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
 	"go.opentelemetry.io/otel/exporters/zipkin"
@@ -31,7 +29,7 @@ const (
 var TracingFlags = Flags{
 	&cli.StringFlag{
 		Name:    FlagTracingExporter,
-		Usage:   "The tracing backend. Supported: 'zipkin', 'otlphttp', 'otlpgrpc. Depreciated: 'jaeger'",
+		Usage:   "The tracing backend. Supported: 'zipkin', 'otlphttp', 'otlpgrpc.",
 		EnvVars: []string{"TRACING_EXPORTER"},
 	},
 	&cli.StringFlag{
@@ -99,18 +97,6 @@ func createExporter(c *cli.Context) (trace.SpanExporter, error) {
 	switch backend {
 	case "":
 		return nil, nil
-	case "jaeger":
-		host, port, err := net.SplitHostPort(endpoint)
-		if err != nil {
-			return nil, err
-		}
-
-		return jaeger.New(
-			jaeger.WithAgentEndpoint(
-				jaeger.WithAgentHost(host),
-				jaeger.WithAgentPort(port),
-			),
-		)
 	case "zipkin":
 		return zipkin.New(endpoint)
 	case "otlphttp":
