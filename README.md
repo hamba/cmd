@@ -48,6 +48,7 @@ func yourAction(c *cli.Context) error {
     // Run your application here...
 }
 ```
+
 ## Flags
 
 ### Logger
@@ -154,3 +155,50 @@ Example: `--tracing.endpoint="agent-host:port"` or `--tracing.endpoint="http://h
 This flag sets the sample ratio of spans that will be reported to the exporter. This should be between 0 and 1.
 
 Example: `--tracing.ratio=0.2`
+
+### Observer
+
+The observe package exposes an `Observer` type which is essentially a helper that combines a logger, tracer and statter.
+It is useful if you use all three for your services and want to avoid carrying around many arguments.
+
+Here is an example of how one might use it:
+
+```go
+func runServer(c *cli.Context) error {
+    ctx, cancel := context.WithCancel(c.Context)
+    defer cancel()
+
+    obsvr, err := cmd.New(c, svcName, version)
+    if err != nil {
+        return err
+    }
+    defer obsvr.Close()
+
+    // Initialize components by passing the obsvr variable.
+    return nil
+}
+
+func New(c *cli.Context, svc, version string) (*observe.Observer, error) {
+	log, logCancel, err := NewLogger(c, svc)
+	if err != nil {
+		return nil, err
+	}
+
+	stats, statsCancel, err := NewStatter(c, log, svc)
+	if err != nil {
+		logCancel()
+		return nil, err
+	}
+
+	tracer, traceCancel, err := NewTracer(c, log, svc, version)
+	if err != nil {
+		logCancel()
+		statsCancel()
+		return nil, err
+	}
+
+	return observe.New(log, stats, tracer, traceCancel, statsCancel, logCancel), nil
+}
+```
+
+It also exposes `NewFake` which allows you to pass fake loggers, tracers and statters in your tests easily.
