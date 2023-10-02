@@ -46,6 +46,8 @@ func yourAction(c *cli.Context) error {
     defer tracer.Shutdown(context.Background())
 
     // Run your application here...
+	
+	return nil
 }
 ```
 
@@ -164,40 +166,39 @@ It is useful if you use all three for your services and want to avoid carrying a
 Here is an example of how one might use it:
 
 ```go
-func runServer(c *cli.Context) error {
-    ctx, cancel := context.WithCancel(c.Context)
-    defer cancel()
-
-    obsvr, err := cmd.New(c, svcName, version)
+func yourAction(c *cli.Context) error {
+     obsvr, err := newObserver(c)
     if err != nil {
         return err
     }
     defer obsvr.Close()
 
-    // Initialize components by passing the obsvr variable.
-    return nil
+	// Run your application here...
+
+	return nil
 }
 
-func New(c *cli.Context, svc, version string) (*observe.Observer, error) {
-	log, logCancel, err := NewLogger(c, svc)
-	if err != nil {
-		return nil, err
-	}
+func newObserver(c *cli.Context) (*observe.Observer, error) {
+    log, err := cmd.NewLogger(c)
+    if err != nil {
+        return nil, err
+    }
 
-	stats, statsCancel, err := NewStatter(c, log, svc)
-	if err != nil {
-		logCancel()
-		return nil, err
-	}
+    stats, err := cmd.NewStatter(c, log)
+    if err != nil {
+        return nil, err
+    }
 
-	tracer, traceCancel, err := NewTracer(c, log, svc, version)
-	if err != nil {
-		logCancel()
-		statsCancel()
-		return nil, err
-	}
+    tracer, err := cmd.NewTracer(c, log,
+        semconv.ServiceNameKey.String("my-service"),
+        semconv.ServiceVersionKey.String("1.0.0"),
+    )
+    if err != nil {
+        return nil, err
+    }
+    tracerCancel := func() { _ = tracer.Shutdown(context.Background()) }
 
-	return observe.New(log, stats, tracer, traceCancel, statsCancel, logCancel), nil
+    return observe.New(log, stats, tracer, tracerCancel), nil
 }
 ```
 
