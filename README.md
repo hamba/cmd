@@ -19,8 +19,6 @@ Install with:
 go get github.com/hamba/cmd/v2
 ```
 
-**Note:** This project has renamed the default branch from `master` to `main`. You will need to update your local environment.
-
 ## Example
 
 ```go
@@ -81,7 +79,7 @@ The statter flags are used by `cmd.NewStatter` to create a new `hamba.Statter.
 
 #### FlagStatsDSN: *--stats.dsn, $STATS_DSN*
 
-This flag sets the DSN describing the stats reporter to use. The available options are `statsd`, `prometheus`, `l2met`.
+This flag sets the DSN describing the stats reporter to use. The available options are `statsd`, `prometheus`, `l2met`, `victoriametrics`.
 
 The DSN can in some situations specify the host and configuration values as shown in the below examples:
 
@@ -144,7 +142,7 @@ The tracing flags are used by `cmd.NewTracer` to create a new open telemetry `tr
 
 This flag sets the exporter to send spans to. The available options are `zipkin`, `otlphttp` and `otlpgrpc`.
 
-Example: `--tracing.exporter=jaeger`
+Example: `--tracing.exporter=otlphttp`
 
 #### FlagTracingEndpoint: *--tracing.endpoint, $TRACING_ENDPOINT*
 
@@ -152,11 +150,23 @@ This flag sets the endpoint the exporter should send traces to.
 
 Example: `--tracing.endpoint="agent-host:port"` or `--tracing.endpoint="http://host:port/api/v2"`
 
+#### FlagTracingEndpointInsecure: *--tracing.endpoint-insecure, $TRACING_ENDPOINT_INSECURE*
+
+This flag sets the endpoint the exporter should send traces to.
+
+Example: `--tracing.endpoint-insecure`
+
 #### FlagTracingRatio: *--tracing.ratio, $TRACING_RATIO*
 
 This flag sets the sample ratio of spans that will be reported to the exporter. This should be between 0 and 1.
 
 Example: `--tracing.ratio=0.2`
+
+#### FlagTracingTags: *--tracing.tags, $TRACING_TAGS*
+
+This flag sets a list of tags appended to every trace. This flag can be specified multiple times.
+
+Example: `--tracing.tags="app=my-app" --tracing.tags="zone=eu-west"`
 
 ### Observer
 
