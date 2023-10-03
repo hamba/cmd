@@ -29,7 +29,7 @@ const (
 var TracingFlags = Flags{
 	&cli.StringFlag{
 		Name:    FlagTracingExporter,
-		Usage:   "The tracing backend. Supported: 'zipkin', 'otlphttp', 'otlpgrpc.",
+		Usage:   "The tracing backend. Supported: 'zipkin', 'otlphttp', 'otlpgrpc'.",
 		EnvVars: []string{"TRACING_EXPORTER"},
 	},
 	&cli.StringFlag{
