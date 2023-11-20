@@ -8,12 +8,12 @@ require (
 	github.com/hamba/statter/v2 v2.3.4
 	github.com/stretchr/testify v1.8.4
 	github.com/urfave/cli/v2 v2.25.7
-	go.opentelemetry.io/otel v1.20.0
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.20.0
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.20.0
-	go.opentelemetry.io/otel/exporters/zipkin v1.20.0
-	go.opentelemetry.io/otel/sdk v1.20.0
-	go.opentelemetry.io/otel/trace v1.20.0
+	go.opentelemetry.io/otel v1.21.0
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.21.0
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.21.0
+	go.opentelemetry.io/otel/exporters/zipkin v1.21.0
+	go.opentelemetry.io/otel/sdk v1.21.0
+	go.opentelemetry.io/otel/trace v1.21.0
 )
 
 require (
@@ -43,8 +43,8 @@ require (
 	github.com/valyala/fastrand v1.1.0 // indirect
 	github.com/valyala/histogram v1.2.0 // indirect
 	github.com/xrash/smetrics v0.0.0-20201216005158-039620a65673 // indirect
-	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.20.0 // indirect
-	go.opentelemetry.io/otel/metric v1.20.0 // indirect
+	go.opentelemetry.io/otel/exporters/otlp/otlptrace v1.21.0 // indirect
+	go.opentelemetry.io/otel/metric v1.21.0 // indirect
 	go.opentelemetry.io/proto/otlp v1.0.0 // indirect
 	golang.org/x/net v0.17.0 // indirect
 	golang.org/x/sys v0.14.0 // indirect
