@@ -49,7 +49,7 @@ func TestNewStats(t *testing.T) {
 		},
 		{
 			name:    "prometheus with server",
-			dsn:     "prom://:51234",
+			dsn:     "prom://127.0.0.1:51234",
 			prefix:  "test",
 			tags:    cli.NewStringSlice(),
 			wantErr: require.NoError,
@@ -63,7 +63,7 @@ func TestNewStats(t *testing.T) {
 		},
 		{
 			name:    "victoria metrics with server",
-			dsn:     "vm://:51234",
+			dsn:     "vm://127.0.0.1:51234",
 			prefix:  "test",
 			tags:    cli.NewStringSlice(),
 			wantErr: require.NoError,
