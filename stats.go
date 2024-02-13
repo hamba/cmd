@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"time"
 
+	"github.com/ettle/strcase"
 	"github.com/hamba/logger/v2"
 	"github.com/hamba/logger/v2/ctx"
 	"github.com/hamba/statter/v2"
@@ -15,7 +16,7 @@ import (
 	"github.com/hamba/statter/v2/reporter/prometheus"
 	"github.com/hamba/statter/v2/reporter/statsd"
 	"github.com/hamba/statter/v2/reporter/victoriametrics"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 // Stats flag constants declared for CLI use.
@@ -35,62 +36,57 @@ var StatsFlags = Flags{
 		Name:     FlagStatsDSN,
 		Category: CategoryStats,
 		Usage:    "The DSN of a stats backend.",
-		EnvVars:  []string{"STATS_DSN"},
+		Sources:  cli.EnvVars(strcase.ToSNAKE(FlagStatsDSN)),
 	},
 	&cli.DurationFlag{
 		Name:     FlagStatsInterval,
 		Category: CategoryStats,
 		Usage:    "The frequency at which the stats are reported.",
 		Value:    time.Second,
-		EnvVars:  []string{"STATS_INTERVAL"},
+		Sources:  cli.EnvVars(strcase.ToSNAKE(FlagStatsInterval)),
 	},
 	&cli.StringFlag{
 		Name:     FlagStatsPrefix,
 		Category: CategoryStats,
 		Usage:    "The prefix of the measurements names.",
-		EnvVars:  []string{"STATS_PREFIX"},
+		Sources:  cli.EnvVars(strcase.ToSNAKE(FlagStatsPrefix)),
 	},
-	&cli.StringSliceFlag{
+	&cli.StringMapFlag{
 		Name:     FlagStatsTags,
 		Category: CategoryStats,
-		Usage:    "A list of tags appended to every measurement. Format: key=value.",
-		EnvVars:  []string{"STATS_TAGS"},
+		Usage:    "A list of tags appended to every measurement.",
+		Sources:  cli.EnvVars(strcase.ToSNAKE(FlagStatsTags)),
 	},
 }
 
 // NewStatter returns a statter configured from the cli.
-func NewStatter(c *cli.Context, log *logger.Logger, opts ...statter.Option) (*statter.Statter, error) {
-	r, err := createReporter(c, log)
+func NewStatter(cmd *cli.Command, log *logger.Logger, opts ...statter.Option) (*statter.Statter, error) {
+	r, err := createReporter(cmd, log)
 	if err != nil {
 		return nil, err
 	}
 
-	intv := c.Duration(FlagStatsInterval)
-	prefix, tags, err := statsWith(c)
-	if err != nil {
-		return nil, err
-	}
+	intv := cmd.Duration(FlagStatsInterval)
+	prefix, tags := statsWith(cmd)
 
 	opts = append(opts, statter.WithPrefix(prefix), statter.WithTags(tags...))
 
 	return statter.New(r, intv, opts...), nil
 }
 
-func statsWith(c *cli.Context) (string, []statter.Tag, error) {
-	strTags, err := Split(c.StringSlice(FlagStatsTags), "=")
-	if err != nil {
-		return "", nil, err
-	}
-	tags := make([]statter.Tag, len(strTags))
-	for i, st := range strTags {
-		tags[i] = statter.Tag{st[0], st[1]}
+func statsWith(cmd *cli.Command) (string, []statter.Tag) {
+	strTags := cmd.StringMap(FlagStatsTags)
+
+	tags := make([]statter.Tag, 0, len(strTags))
+	for k, v := range strTags {
+		tags = append(tags, statter.Tag{k, v})
 	}
 
-	return c.String(FlagStatsPrefix), tags, nil
+	return cmd.String(FlagStatsPrefix), tags
 }
 
-func createReporter(c *cli.Context, log *logger.Logger) (statter.Reporter, error) {
-	dsn := c.String(FlagStatsDSN)
+func createReporter(cmd *cli.Command, log *logger.Logger) (statter.Reporter, error) {
+	dsn := cmd.String(FlagStatsDSN)
 	if dsn == "" {
 		return statter.DiscardReporter, nil
 	}

@@ -1,124 +1,97 @@
 package cmd_test
 
 import (
+	"context"
 	"io"
 	"testing"
-	"time"
 
-	"github.com/hamba/cmd/v2"
+	"github.com/hamba/cmd/v3"
 	"github.com/hamba/logger/v2"
-	"github.com/stretchr/testify/require"
-	"github.com/urfave/cli/v2"
+	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli/v3"
 )
 
 func TestNewStats(t *testing.T) {
+	log := logger.New(io.Discard, logger.LogfmtFormat(), logger.Error)
+
 	tests := []struct {
 		name    string
-		dsn     string
-		prefix  string
-		tags    *cli.StringSlice
-		wantErr require.ErrorAssertionFunc
+		args    []string
+		wantErr assert.ErrorAssertionFunc
 	}{
 		{
 			name:    "no stats",
-			dsn:     "",
-			prefix:  "test",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "statsd",
-			dsn:     "statsd://localhost:8125?flushBytes=1423&flushInterval=10s",
-			prefix:  "test",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{"--stats.dsn=statsd://localhost:8125?flushBytes=1423&flushInterval=10s", "--stats.prefix=test"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "l2met",
-			dsn:     "l2met://",
-			prefix:  "test",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{"--stats.dsn=l2met://", "--stats.prefix=test"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "prometheus",
-			dsn:     "prometheus://",
-			prefix:  "test",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{"--stats.dsn=prometheus://", "--stats.prefix=test"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "prometheus with server",
-			dsn:     "prom://127.0.0.1:51234",
-			prefix:  "test",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{"--stats.dsn=prom://127.0.0.1:51234", "--stats.prefix=test"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "victoria metrics",
-			dsn:     "victoriametrics://",
-			prefix:  "test",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{"--stats.dsn=victoriametrics://", "--stats.prefix=test"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "victoria metrics with server",
-			dsn:     "vm://127.0.0.1:51234",
-			prefix:  "test",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{"--stats.dsn=vm://127.0.0.1:51234", "--stats.prefix=test"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "unknown stats scheme",
-			dsn:     "unknownscheme://",
-			prefix:  "",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.Error,
+			args:    []string{"--stats.dsn=unknownscheme://"},
+			wantErr: assert.Error,
 		},
 		{
 			name:    "invalid DSN",
-			dsn:     "://",
-			prefix:  "",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.Error,
+			args:    []string{"--stats.dsn=://"},
+			wantErr: assert.Error,
 		},
 		{
 			name:    "no prefix",
-			dsn:     "l2met://",
-			prefix:  "",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{"--stats.dsn=l2met://"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "tags",
-			dsn:     "l2met://",
-			prefix:  "",
-			tags:    cli.NewStringSlice("a=b"),
-			wantErr: require.NoError,
+			args:    []string{"--stats.dsn=l2met://", "--stats.tags=a=b"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "invalid tags",
-			dsn:     "l2met://",
-			prefix:  "",
-			tags:    cli.NewStringSlice("a"),
-			wantErr: require.Error,
+			args:    []string{"--stats.dsn=l2met://", "--stats.tags=a"},
+			wantErr: assert.Error,
 		},
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.name, func(t *testing.T) {
-			t.Parallel()
+			c := &cli.Command{
+				Flags: cmd.StatsFlags,
+				Action: func(_ context.Context, c *cli.Command) error {
+					_, err := cmd.NewStatter(c, log)
+					return err
+				},
+			}
 
-			c, fs := newTestContext()
-			fs.String(cmd.FlagStatsDSN, test.dsn, "doc")
-			fs.Duration(cmd.FlagStatsInterval, time.Second, "doc")
-			fs.String(cmd.FlagStatsPrefix, test.prefix, "doc")
-			fs.Var(test.tags, cmd.FlagStatsTags, "doc")
-
-			log := logger.New(io.Discard, logger.LogfmtFormat(), logger.Error)
-
-			_, err := cmd.NewStatter(c, log)
+			err := c.Run(t.Context(), append([]string{"test"}, test.args...))
 
 			test.wantErr(t, err)
 		})

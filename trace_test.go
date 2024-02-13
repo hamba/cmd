@@ -1,97 +1,118 @@
 package cmd_test
 
 import (
+	"context"
 	"io"
 	"testing"
 
-	"github.com/hamba/cmd/v2"
+	"github.com/hamba/cmd/v3"
 	"github.com/hamba/logger/v2"
-	"github.com/stretchr/testify/require"
-	"github.com/urfave/cli/v2"
+	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli/v3"
 	semconv "go.opentelemetry.io/otel/semconv/v1.18.0"
 )
 
 func TestNewTracer(t *testing.T) {
+	log := logger.New(io.Discard, logger.LogfmtFormat(), logger.Error)
+
 	tests := []struct {
-		name     string
-		exporter string
-		endpoint string
-		tags     []string
-		headers  []string
-		ratio    float64
-		wantErr  require.ErrorAssertionFunc
+		name    string
+		args    []string
+		wantErr assert.ErrorAssertionFunc
 	}{
 		{
-			name:     "no tracer",
-			exporter: "",
-			endpoint: "",
-			ratio:    1.0,
-			wantErr:  require.NoError,
+			name:    "no tracer",
+			args:    []string{},
+			wantErr: assert.NoError,
 		},
 		{
-			name:     "zipkin",
-			exporter: "zipkin",
-			endpoint: "http://localhost:1234/api/v2",
-			ratio:    1.0,
-			wantErr:  require.NoError,
+			name: "zipkin",
+			args: []string{
+				"--tracing.exporter=zipkin",
+				"--tracing.endpoint=http://localhost:1234/api/v2",
+			},
+			wantErr: assert.NoError,
 		},
 		{
-			name:     "with tags",
-			exporter: "otlphttp",
-			endpoint: "localhost:1234",
-			tags:     []string{"cluster=test", "namespace=num"},
-			ratio:    1.0,
-			wantErr:  require.NoError,
+			name: "otelhttp",
+			args: []string{
+				"--tracing.exporter=otlphttp",
+				"--tracing.endpoint=http://localhost:1234/",
+			},
+			wantErr: assert.NoError,
 		},
 		{
-			name:     "with headers",
-			exporter: "otlphttp",
-			endpoint: "localhost:1234",
-			headers:  []string{"cluster=test", "namespace=num"},
-			ratio:    1.0,
-			wantErr:  require.NoError,
+			name: "otelgrpc",
+			args: []string{
+				"--tracing.exporter=otlpgrpc",
+				"--tracing.endpoint=localhost:1234",
+			},
+			wantErr: assert.NoError,
 		},
 		{
-			name:     "unknown exporter",
-			exporter: "some-exporter",
-			endpoint: "localhost:1234",
-			ratio:    1.0,
-			wantErr:  require.Error,
+			name: "with tags",
+			args: []string{
+				"--tracing.exporter=zipkin",
+				"--tracing.endpoint=http://localhost:1234/api/v2",
+				"--tracing.ratio=1",
+				"--tracing.tags=cluster=test",
+				"--tracing.tags=namespace=num",
+			},
+			wantErr: assert.NoError,
 		},
 		{
-			name:     "ratio too low",
-			exporter: "otlpgrpc",
-			endpoint: "localhost:1234",
-			ratio:    -1.0,
-			wantErr:  require.NoError,
+			name: "with headers",
+			args: []string{
+				"--tracing.exporter=otlphttp",
+				"--tracing.endpoint=http://localhost:1234/",
+				"--tracing.ratio=1",
+				"--tracing.headers=cluster=test",
+				"--tracing.headers=namespace=num",
+			},
+			wantErr: assert.NoError,
 		},
 		{
-			name:     "ratio too high",
-			exporter: "otlpgrpc",
-			endpoint: "localhost:1234",
-			ratio:    2.0,
-			wantErr:  require.NoError,
+			name: "unknown exporter",
+			args: []string{
+				"--tracing.exporter=some-exporter",
+				"--tracing.endpoint=localhost:1234",
+			},
+			wantErr: assert.Error,
+		},
+		{
+			name: "ratio too low",
+			args: []string{
+				"--tracing.exporter=otlpgrpc",
+				"--tracing.endpoint=localhost:1234",
+				"--tracing.ratio=-1",
+			},
+			wantErr: assert.NoError,
+		},
+		{
+			name: "ratio too high",
+			args: []string{
+				"--tracing.exporter=otlpgrpc",
+				"--tracing.endpoint=localhost:1234",
+				"--tracing.ratio=2",
+			},
+			wantErr: assert.NoError,
 		},
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.name, func(t *testing.T) {
-			t.Parallel()
+			c := &cli.Command{
+				Flags: cmd.TracingFlags,
+				Action: func(_ context.Context, c *cli.Command) error {
+					_, err := cmd.NewTracer(t.Context(), c, log,
+						semconv.ServiceNameKey.String("my-service"),
+						semconv.ServiceVersionKey.String("1.0.0"),
+					)
+					return err
+				},
+			}
 
-			c, fs := newTestContext()
-			fs.String(cmd.FlagTracingExporter, test.exporter, "doc")
-			fs.String(cmd.FlagTracingEndpoint, test.endpoint, "doc")
-			fs.Var(cli.NewStringSlice(test.tags...), cmd.FlagTracingTags, "doc")
-			fs.Var(cli.NewStringSlice(test.headers...), cmd.FlagTracingHeaders, "doc")
-			fs.Float64(cmd.FlagTracingRatio, test.ratio, "doc")
-
-			log := logger.New(io.Discard, logger.LogfmtFormat(), logger.Error)
-
-			_, err := cmd.NewTracer(c, log,
-				semconv.ServiceNameKey.String("my-service"),
-				semconv.ServiceVersionKey.String("1.0.0"),
-			)
+			err := c.Run(t.Context(), append([]string{"test"}, test.args...))
 
 			test.wantErr(t, err)
 		})

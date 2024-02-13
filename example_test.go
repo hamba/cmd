@@ -2,15 +2,14 @@ package cmd_test
 
 import (
 	"context"
-	"fmt"
 
-	"github.com/hamba/cmd/v2"
-	"github.com/urfave/cli/v2"
+	"github.com/hamba/cmd/v3"
+	"github.com/urfave/cli/v3"
 	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
 )
 
 func ExampleNewLogger() {
-	var c *cli.Context // Get this from your action
+	var c *cli.Command // Get this from your action
 
 	log, err := cmd.NewLogger(c)
 	if err != nil {
@@ -22,7 +21,7 @@ func ExampleNewLogger() {
 }
 
 func ExampleNewStatter() {
-	var c *cli.Context // Get this from your action
+	var c *cli.Command // Get this from your action
 
 	log, err := cmd.NewLogger(c)
 	if err != nil {
@@ -35,13 +34,13 @@ func ExampleNewStatter() {
 		// Handle error.
 		return
 	}
-	defer stats.Close()
+	defer func() { _ = stats.Close() }()
 
 	_ = stats
 }
 
 func ExampleNewProfiler() {
-	var c *cli.Context // Get this from your action
+	var c *cli.Command // Get this from your action
 
 	log, err := cmd.NewLogger(c)
 	if err != nil {
@@ -62,7 +61,10 @@ func ExampleNewProfiler() {
 }
 
 func ExampleNewTracer() {
-	var c *cli.Context // Get this from your action
+	var (
+		ctx context.Context
+		c   *cli.Command // Get this from your action
+	)
 
 	log, err := cmd.NewLogger(c)
 	if err != nil {
@@ -70,7 +72,7 @@ func ExampleNewTracer() {
 		return
 	}
 
-	tracer, err := cmd.NewTracer(c, log,
+	tracer, err := cmd.NewTracer(ctx, c, log,
 		semconv.ServiceNameKey.String("my-service"),
 		semconv.ServiceVersionKey.String("1.0.0"),
 	)
@@ -78,19 +80,7 @@ func ExampleNewTracer() {
 		// Handle error.
 		return
 	}
-	defer tracer.Shutdown(context.Background())
+	defer func() { _ = tracer.Shutdown(context.Background()) }()
 
 	_ = tracer
-}
-
-func ExampleSplit() {
-	input := []string{"a=b", "foo=bar"} // Usually from a cli.StringSlice
-
-	tags, err := cmd.Split(input, "=")
-	if err != nil {
-		// Handle error
-	}
-
-	fmt.Println(tags)
-	// Output: [[a b] [foo bar]]
 }

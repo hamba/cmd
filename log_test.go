@@ -1,96 +1,80 @@
 package cmd_test
 
 import (
+	"context"
 	"testing"
 
-	"github.com/hamba/cmd/v2"
-	"github.com/stretchr/testify/require"
-	"github.com/urfave/cli/v2"
+	"github.com/hamba/cmd/v3"
+	"github.com/stretchr/testify/assert"
+	"github.com/urfave/cli/v3"
 )
 
 func TestNewLogger(t *testing.T) {
 	tests := []struct {
 		name    string
-		lvl     string
-		format  string
-		tags    *cli.StringSlice
-		wantErr require.ErrorAssertionFunc
+		args    []string
+		wantErr assert.ErrorAssertionFunc
 	}{
 		{
 			name:    "json format",
-			lvl:     "info",
-			format:  "json",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{"--log.level=info", "--log.format=json"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "logfmt format",
-			lvl:     "info",
-			format:  "logfmt",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{"--log.level=info", "--log.format=logfmt"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "console format",
-			lvl:     "info",
-			format:  "console",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{"--log.level=info", "--log.format=console"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "no format",
-			lvl:     "",
-			format:  "json",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{"--log.level=info"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "invalid format",
-			lvl:     "info",
-			format:  "invalid",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			args:    []string{"--log.level=info", "--log.format=invalid"},
+			wantErr: assert.NoError,
 		},
 		{
-			name:    "valid Level",
-			lvl:     "info",
-			format:  "",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.NoError,
+			name:    "valid level",
+			args:    []string{"--log.level=info"},
+			wantErr: assert.NoError,
 		},
 		{
-			name:    "invalid Level",
-			lvl:     "invalid",
-			format:  "json",
-			tags:    cli.NewStringSlice(),
-			wantErr: require.Error,
+			name:    "invalid level",
+			args:    []string{"--log.level=invalid", "--log.format=json"},
+			wantErr: assert.Error,
 		},
 		{
 			name:    "tags",
-			lvl:     "info",
-			format:  "json",
-			tags:    cli.NewStringSlice("a=b"),
-			wantErr: require.NoError,
+			args:    []string{"--log.level=info", "--log.format=json", "--log.ctx=a=b"},
+			wantErr: assert.NoError,
 		},
 		{
 			name:    "invalid tags",
-			lvl:     "info",
-			format:  "json",
-			tags:    cli.NewStringSlice("single"),
-			wantErr: require.Error,
+			args:    []string{"--log.level=info", "--log.format=json", "--log.ctx=a"},
+			wantErr: assert.Error,
 		},
 	}
 
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			c, fs := newTestContext()
-			fs.String(cmd.FlagLogLevel, tt.lvl, "doc")
-			fs.String(cmd.FlagLogFormat, tt.format, "doc")
-			fs.Var(tt.tags, cmd.FlagLogCtx, "doc")
+	for _, test := range tests {
+		t.Run(test.name, func(t *testing.T) {
+			c := &cli.Command{
+				Flags: cmd.LogFlags,
+				Action: func(_ context.Context, c *cli.Command) error {
+					_, err := cmd.NewLogger(c)
+					return err
+				},
+			}
 
-			_, err := cmd.NewLogger(c)
+			err := c.Run(t.Context(), append([]string{"test"}, test.args...))
 
-			tt.wantErr(t, err)
+			test.wantErr(t, err)
 		})
 
 	}

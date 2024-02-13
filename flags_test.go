@@ -3,9 +3,9 @@ package cmd_test
 import (
 	"testing"
 
-	"github.com/hamba/cmd/v2"
+	"github.com/hamba/cmd/v3"
 	"github.com/stretchr/testify/assert"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 func TestFlags_Merge(t *testing.T) {
