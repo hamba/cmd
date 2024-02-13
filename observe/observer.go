@@ -6,16 +6,16 @@ import (
 	"time"
 
 	otelpyroscope "github.com/grafana/otel-profiling-go"
-	"github.com/hamba/cmd/v2"
+	"github.com/hamba/cmd/v3"
 	"github.com/hamba/logger/v2"
 	lctx "github.com/hamba/logger/v2/ctx"
 	"github.com/hamba/statter/v2"
 	"github.com/hamba/statter/v2/runtime"
 	"github.com/hamba/statter/v2/tags"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
-	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 	"go.opentelemetry.io/otel/trace"
 )
 
@@ -41,19 +41,9 @@ type Observer struct {
 }
 
 // New returns an observer with the given observability primitives.
-func New(log *logger.Logger, stats *statter.Statter, traceProv trace.TracerProvider, closeFns ...func()) *Observer {
-	return &Observer{
-		Log:       log,
-		Stats:     stats,
-		TraceProv: traceProv,
-		closeFns:  closeFns,
-	}
-}
-
-// NewFromCLI returns an observer with the given observability primitives.
 //
 //nolint:cyclop // Splitting this will not make it simpler.
-func NewFromCLI(cliCtx *cli.Context, svc string, opts *Options) (*Observer, error) {
+func New(ctx context.Context, cliCmd *cli.Command, svc string, opts *Options) (*Observer, error) {
 	var closeFns []func()
 
 	if opts == nil {
@@ -61,21 +51,21 @@ func NewFromCLI(cliCtx *cli.Context, svc string, opts *Options) (*Observer, erro
 	}
 
 	// Logger.
-	log, err := cmd.NewLogger(cliCtx)
+	log, err := cmd.NewLogger(cliCmd)
 	if err != nil {
 		return nil, err
 	}
-	if opts.LogTimeFormat != "" {
-		logger.TimeFormat = opts.LogTimeFormat
-	}
 	if opts.LogTimestamps {
 		closeFns = append(closeFns, log.WithTimestamp())
+	}
+	if opts.LogTimeFormat != "" {
+		logger.TimeFormat = opts.LogTimeFormat
 	}
 	opts.LogCtx = append([]logger.Field{lctx.Str("svc", svc)}, opts.LogCtx...)
 	log = log.With(opts.LogCtx...)
 
 	// Statter.
-	stats, err := cmd.NewStatter(cliCtx, log)
+	stats, err := cmd.NewStatter(cliCmd, log)
 	if err != nil {
 		for _, fn := range closeFns {
 			fn()
@@ -90,7 +80,7 @@ func NewFromCLI(cliCtx *cli.Context, svc string, opts *Options) (*Observer, erro
 	stats = stats.With("", opts.StatsTags...)
 
 	// Profiler.
-	prof, err := cmd.NewProfiler(cliCtx, svc, log)
+	prof, err := cmd.NewProfiler(cliCmd, svc, log)
 	if err != nil {
 		for _, fn := range closeFns {
 			fn()
@@ -103,14 +93,14 @@ func NewFromCLI(cliCtx *cli.Context, svc string, opts *Options) (*Observer, erro
 
 	// Tracer.
 	opts.TracingAttrs = append(opts.TracingAttrs, semconv.ServiceNameKey.String(svc))
-	tracer, err := cmd.NewTracer(cliCtx, log, opts.TracingAttrs...)
+	tracer, err := cmd.NewTracer(ctx, cliCmd, log, opts.TracingAttrs...)
 	if err != nil {
 		for _, fn := range closeFns {
 			fn()
 		}
 		return nil, err
 	}
-	closeFns = append(closeFns, func() { _ = tracer.Shutdown(context.Background()) })
+	closeFns = append(closeFns, func() { _ = tracer.Shutdown(context.Background()) }) //nolint:contextcheck
 
 	var tp trace.TracerProvider = tracer
 	if prof != nil && tracer != nil {
@@ -136,8 +126,8 @@ func (o *Observer) Tracer(name string, opts ...trace.TracerOption) trace.Tracer 
 
 // Close closes the observability primitives.
 func (o *Observer) Close() {
-	for _, cancel := range o.closeFns {
-		cancel()
+	for _, fn := range o.closeFns {
+		fn()
 	}
 }
 
@@ -148,5 +138,9 @@ func NewFake() *Observer {
 	stats := statter.New(statter.DiscardReporter, time.Minute)
 	tracer := otel.GetTracerProvider()
 
-	return New(log, stats, tracer)
+	return &Observer{
+		Log:       log,
+		Stats:     stats,
+		TraceProv: tracer,
+	}
 }

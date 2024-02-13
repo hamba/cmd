@@ -4,7 +4,7 @@ import (
 	"bytes"
 	"testing"
 
-	"github.com/hamba/cmd/v2/term"
+	"github.com/hamba/cmd/v3/term"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
 )
@@ -37,8 +37,9 @@ func TestBasic_Output(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.name, func(t *testing.T) {
+			t.Parallel()
+
 			var buf bytes.Buffer
 			trm := term.Basic{
 				Writer:  &buf,
