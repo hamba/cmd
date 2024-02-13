@@ -1,11 +1,13 @@
 package cmd
 
 import (
+	"context"
 	"fmt"
 
+	"github.com/ettle/strcase"
 	"github.com/hamba/logger/v2"
 	"github.com/hamba/logger/v2/ctx"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 	"go.opentelemetry.io/otel"
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
@@ -13,7 +15,7 @@ import (
 	"go.opentelemetry.io/otel/exporters/zipkin"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
-	semconv "go.opentelemetry.io/otel/semconv/v1.17.0"
+	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
 )
 
 // Tracing flag constants declared for CLI use.
@@ -30,36 +32,38 @@ var TracingFlags = Flags{
 	&cli.StringFlag{
 		Name:    FlagTracingExporter,
 		Usage:   "The tracing backend. Supported: 'zipkin', 'otlphttp', 'otlpgrpc'.",
-		EnvVars: []string{"TRACING_EXPORTER"},
+		Sources: cli.EnvVars(strcase.ToSNAKE(FlagTracingExporter)),
 	},
 	&cli.StringFlag{
 		Name:    FlagTracingEndpoint,
 		Usage:   "The tracing backend endpoint.",
-		EnvVars: []string{"TRACING_ENDPOINT"},
+		Sources: cli.EnvVars(strcase.ToSNAKE(FlagTracingEndpoint)),
 	},
 	&cli.BoolFlag{
 		Name:    FlagTracingEndpointInsecure,
 		Usage:   "Determines if the endpoint is insecure.",
-		EnvVars: []string{"TRACING_ENDPOINT_INSECURE"},
+		Sources: cli.EnvVars(strcase.ToSNAKE(FlagTracingEndpointInsecure)),
 	},
-	&cli.StringSliceFlag{
+	&cli.StringMapFlag{
 		Name:    FlagTracingTags,
-		Usage:   "A list of tags appended to every trace. Format: key=value.",
-		EnvVars: []string{"TRACING_TAGS"},
+		Usage:   "A list of tags appended to every trace.",
+		Sources: cli.EnvVars(strcase.ToSNAKE(FlagTracingTags)),
 	},
-	&cli.Float64Flag{
+	&cli.FloatFlag{
 		Name:    FlagTracingRatio,
 		Usage:   "The ratio between 0 and 1 of sample traces to take.",
 		Value:   0.5,
-		EnvVars: []string{"TRACING_RATIO"},
+		Sources: cli.EnvVars(strcase.ToSNAKE(FlagTracingRatio)),
 	},
 }
 
 // NewTracer returns a tracer configured from the cli.
-func NewTracer(c *cli.Context, log *logger.Logger, resAttributes ...attribute.KeyValue) (*trace.TracerProvider, error) {
+func NewTracer(
+	ctx context.Context, cmd *cli.Command, log *logger.Logger, attrs ...attribute.KeyValue,
+) (*trace.TracerProvider, error) {
 	otel.SetErrorHandler(logErrorHandler{log: log})
 
-	exp, err := createExporter(c)
+	exp, err := createExporter(ctx, cmd)
 	if err != nil {
 		return nil, err
 	}
@@ -69,17 +73,12 @@ func NewTracer(c *cli.Context, log *logger.Logger, resAttributes ...attribute.Ke
 
 	proc := trace.NewBatchSpanProcessor(exp)
 
-	ratio := c.Float64(FlagTracingRatio)
+	ratio := cmd.Float(FlagTracingRatio)
 	sampler := trace.ParentBased(trace.TraceIDRatioBased(ratio))
 
-	attrs := resAttributes
-	if tags := c.StringSlice(FlagTracingTags); len(tags) > 0 {
-		strTags, err := Split(tags, "=")
-		if err != nil {
-			return nil, err
-		}
-		for _, kv := range strTags {
-			attrs = append(attrs, attribute.String(kv[0], kv[1]))
+	if tags := cmd.StringMap(FlagTracingTags); len(tags) > 0 {
+		for k, v := range tags {
+			attrs = append(attrs, attribute.String(k, v))
 		}
 	}
 
@@ -90,9 +89,9 @@ func NewTracer(c *cli.Context, log *logger.Logger, resAttributes ...attribute.Ke
 	), nil
 }
 
-func createExporter(c *cli.Context) (trace.SpanExporter, error) {
-	backend := c.String(FlagTracingExporter)
-	endpoint := c.String(FlagTracingEndpoint)
+func createExporter(ctx context.Context, cmd *cli.Command) (trace.SpanExporter, error) {
+	backend := cmd.String(FlagTracingExporter)
+	endpoint := cmd.String(FlagTracingEndpoint)
 
 	switch backend {
 	case "":
@@ -101,16 +100,16 @@ func createExporter(c *cli.Context) (trace.SpanExporter, error) {
 		return zipkin.New(endpoint)
 	case "otlphttp":
 		opts := []otlptracehttp.Option{otlptracehttp.WithEndpoint(endpoint)}
-		if c.Bool(FlagTracingEndpointInsecure) {
+		if cmd.Bool(FlagTracingEndpointInsecure) {
 			opts = append(opts, otlptracehttp.WithInsecure())
 		}
-		return otlptracehttp.New(c.Context, opts...)
+		return otlptracehttp.New(ctx, opts...)
 	case "otlpgrpc":
 		opts := []otlptracegrpc.Option{otlptracegrpc.WithEndpoint(endpoint)}
-		if c.Bool(FlagTracingEndpointInsecure) {
+		if cmd.Bool(FlagTracingEndpointInsecure) {
 			opts = append(opts, otlptracegrpc.WithInsecure())
 		}
-		return otlptracegrpc.New(c.Context, opts...)
+		return otlptracegrpc.New(ctx, opts...)
 	default:
 		return nil, fmt.Errorf("unsupported tracing backend %q", backend)
 	}

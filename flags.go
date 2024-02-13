@@ -1,7 +1,7 @@
 package cmd
 
 import (
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 // Flags represents a set of CLI flags.
@@ -19,4 +19,4 @@ func (f Flags) Merge(flags ...Flags) Flags {
 }
 
 // MonitoringFlags are flags that configure logging, stats and tracing.
-var MonitoringFlags = Flags{}.Merge(LogFlags, StatsFlags, TracingFlags)
+var MonitoringFlags = Flags{}.Merge(LogFlags, StatsFlags, ProfilingFlags, TracingFlags)
