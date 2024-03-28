@@ -18,5 +18,5 @@ func (f Flags) Merge(flags ...Flags) Flags {
 	return m
 }
 
-// MonitoringFlags are flags that configure logging, stats and tracing.
-var MonitoringFlags = Flags{}.Merge(LogFlags, StatsFlags, TracingFlags)
+// MonitoringFlags are flags that configure logging, stats, profiling and tracing.
+var MonitoringFlags = Flags{}.Merge(LogFlags, StatsFlags, ProfilingFlags, TracingFlags)
