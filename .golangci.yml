@@ -26,6 +26,7 @@ linters:
     - exhaustive
     - exhaustruct
     - forcetypeassert
+    - funlen
     - gochecknoglobals
     - gochecknoinits
     - goerr113

@@ -55,7 +55,7 @@ var TracingFlags = Flags{
 	},
 }
 
-// NewTracer returns a tracer configures from the cli.
+// NewTracer returns a tracer configured from the cli.
 func NewTracer(c *cli.Context, log *logger.Logger, resAttributes ...attribute.KeyValue) (*trace.TracerProvider, error) {
 	otel.SetErrorHandler(logErrorHandler{log: log})
 

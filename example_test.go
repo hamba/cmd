@@ -40,6 +40,27 @@ func ExampleNewStatter() {
 	_ = stats
 }
 
+func ExampleNewProfiler() {
+	var c *cli.Context // Get this from your action
+
+	log, err := cmd.NewLogger(c)
+	if err != nil {
+		// Handle error.
+		return
+	}
+
+	prof, err := cmd.NewProfiler(c, "my-service", log)
+	if err != nil {
+		// Handle error.
+		return
+	}
+	if prof != nil {
+		defer func() { _ = prof.Stop() }()
+	}
+
+	_ = prof
+}
+
 func ExampleNewTracer() {
 	var c *cli.Context // Get this from your action
 
