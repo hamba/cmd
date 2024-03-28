@@ -134,6 +134,34 @@ This flag sets tag key value pairs to set on all stats. This flag can be specifi
 
 Example: `--stats.tags="app=my-app" --stats.tags="zone=eu-west"`
 
+### Profiler
+
+The profiler flags are used by `cmd.NewProfiler` to create a Pyroscope `*pyroscope.Profiler`.
+
+#### FlagProfilingDSN: *--profiling.dsn, $PROFILING_DSN*
+
+This flag configures the URL, authentication and optionally the Tenant ID for Pyroscope.
+
+Example: `--profiling.dsn=https://user:pass@host/path?token=auth-token&tenantid=my-tenant-id`
+
+#### FlagProfileUploadRate: *--profiling.upload-rate, $PROFILING_UPLOAD_RATE*
+
+This flag configures the rate at which profiles are uploaded.
+
+Example: `--profiling.upload-rate=10s`
+
+#### FlagProfilingTags: *--profiling.tags, $PROFILING_TAGS*
+
+This configures a list of tags appended to every profile. This flag can be specified multiple times.
+
+Example: `--profiling.tags="app=my-app" --profiling.tags="zone=eu-west"`
+
+#### FlagProfilingTypes: *--profiling.types, $PROFILING_TYPES*
+
+This configures the profile types that are captured. By default all supported types are captured. This flag can be specified multiple times.
+
+Example: `--profiling.types=cpu --profiling.types=inuse_object`
+
 ### Tracer
 
 The tracing flags are used by `cmd.NewTracer` to create a new open telemetry `trace.TraceProvider`.
