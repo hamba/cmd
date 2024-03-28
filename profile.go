@@ -36,7 +36,7 @@ const (
 var ProfilingFlags = Flags{
 	&cli.StringFlag{
 		Name: FlagProfilingDSN,
-		Usage: "The address an configuration of the Pyroscope server, in the format " +
+		Usage: "The address to the Pyroscope server, in the format " +
 			"'http://basic:auth@server:port?token=auth-token&tenantid=tenant-id'.",
 		EnvVars: []string{"PROFILING_DSN"},
 	},
