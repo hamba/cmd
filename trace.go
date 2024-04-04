@@ -22,6 +22,7 @@ const (
 	FlagTracingEndpoint         = "tracing.endpoint"
 	FlagTracingEndpointInsecure = "tracing.endpoint-insecure"
 	FlagTracingTags             = "tracing.tags"
+	FlagTracingHeaders          = "tracing.headers"
 	FlagTracingRatio            = "tracing.ratio"
 )
 
@@ -46,6 +47,11 @@ var TracingFlags = Flags{
 		Name:    FlagTracingTags,
 		Usage:   "A list of tags appended to every trace. Format: key=value.",
 		EnvVars: []string{"TRACING_TAGS"},
+	},
+	&cli.StringSliceFlag{
+		Name:    FlagTracingHeaders,
+		Usage:   "A list of headers appended to every trace when supported by the exporter. Format: key=value.",
+		EnvVars: []string{"TRACING_HEADERS"},
 	},
 	&cli.Float64Flag{
 		Name:    FlagTracingRatio,
@@ -94,19 +100,30 @@ func createExporter(c *cli.Context) (trace.SpanExporter, error) {
 	backend := c.String(FlagTracingExporter)
 	endpoint := c.String(FlagTracingEndpoint)
 
+	var (
+		headers map[string]string
+		err     error
+	)
+	if h := c.StringSlice(FlagTracingHeaders); len(h) > 0 {
+		headers, err = sliceToMap(h)
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	switch backend {
 	case "":
 		return nil, nil
 	case "zipkin":
 		return zipkin.New(endpoint)
 	case "otlphttp":
-		opts := []otlptracehttp.Option{otlptracehttp.WithEndpoint(endpoint)}
+		opts := []otlptracehttp.Option{otlptracehttp.WithEndpoint(endpoint), otlptracehttp.WithHeaders(headers)}
 		if c.Bool(FlagTracingEndpointInsecure) {
 			opts = append(opts, otlptracehttp.WithInsecure())
 		}
 		return otlptracehttp.New(c.Context, opts...)
 	case "otlpgrpc":
-		opts := []otlptracegrpc.Option{otlptracegrpc.WithEndpoint(endpoint)}
+		opts := []otlptracegrpc.Option{otlptracegrpc.WithEndpoint(endpoint), otlptracegrpc.WithHeaders(headers)}
 		if c.Bool(FlagTracingEndpointInsecure) {
 			opts = append(opts, otlptracegrpc.WithInsecure())
 		}

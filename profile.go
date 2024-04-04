@@ -90,14 +90,11 @@ func NewProfiler(c *cli.Context, svc string, log *logger.Logger) (*pyroscope.Pro
 		Path:   u.Path,
 	}
 
-	tags := map[string]string{}
+	var tags map[string]string
 	if pairs := c.StringSlice(FlagProfilingTags); len(pairs) > 0 {
-		strTags, err := Split(pairs, "=")
+		tags, err = sliceToMap(pairs)
 		if err != nil {
 			return nil, err
-		}
-		for _, kv := range strTags {
-			tags[kv[0]] = kv[1]
 		}
 	}
 

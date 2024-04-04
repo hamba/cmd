@@ -20,3 +20,15 @@ func Split(slice []string, sep string) ([][2]string, error) {
 
 	return res, nil
 }
+
+func sliceToMap(s []string) (map[string]string, error) {
+	m := make(map[string]string, len(s))
+	kvs, err := Split(s, "=")
+	if err != nil {
+		return nil, err
+	}
+	for _, kv := range kvs {
+		m[kv[0]] = kv[1]
+	}
+	return m, nil
+}

@@ -17,6 +17,7 @@ func TestNewTracer(t *testing.T) {
 		exporter string
 		endpoint string
 		tags     []string
+		headers  []string
 		ratio    float64
 		wantErr  require.ErrorAssertionFunc
 	}{
@@ -39,6 +40,14 @@ func TestNewTracer(t *testing.T) {
 			exporter: "otlphttp",
 			endpoint: "localhost:1234",
 			tags:     []string{"cluster=test", "namespace=num"},
+			ratio:    1.0,
+			wantErr:  require.NoError,
+		},
+		{
+			name:     "with headers",
+			exporter: "otlphttp",
+			endpoint: "localhost:1234",
+			headers:  []string{"cluster=test", "namespace=num"},
 			ratio:    1.0,
 			wantErr:  require.NoError,
 		},
@@ -74,6 +83,7 @@ func TestNewTracer(t *testing.T) {
 			fs.String(cmd.FlagTracingExporter, test.exporter, "doc")
 			fs.String(cmd.FlagTracingEndpoint, test.endpoint, "doc")
 			fs.Var(cli.NewStringSlice(test.tags...), cmd.FlagTracingTags, "doc")
+			fs.Var(cli.NewStringSlice(test.headers...), cmd.FlagTracingHeaders, "doc")
 			fs.Float64(cmd.FlagTracingRatio, test.ratio, "doc")
 
 			log := logger.New(io.Discard, logger.LogfmtFormat(), logger.Error)
