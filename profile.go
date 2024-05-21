@@ -131,7 +131,7 @@ func (a pyroLogAdapter) Infof(format string, args ...any) {
 }
 
 func (a pyroLogAdapter) Debugf(format string, args ...any) {
-	a.log.Debug(fmt.Sprintf(format, args...))
+	a.log.Trace(fmt.Sprintf(format, args...))
 }
 
 func (a pyroLogAdapter) Errorf(format string, args ...any) {
