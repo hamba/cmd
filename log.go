@@ -25,7 +25,7 @@ var LogFlags = Flags{
 	&cli.StringFlag{
 		Name:    FlagLogLevel,
 		Value:   "info",
-		Usage:   "Specify the log level. e.g. 'debug', 'info', 'error'.",
+		Usage:   "Specify the log level. e.g. 'trace', 'debug', 'info', 'error'.",
 		EnvVars: []string{"LOG_LEVEL"},
 	},
 	&cli.StringSliceFlag{
