@@ -32,29 +32,36 @@ const (
 	FlagProfilingTypes    = "profiling.types"
 )
 
+// CategoryProfiling is the profiling category.
+var CategoryProfiling = "Profiling"
+
 // ProfilingFlags are flags that configure profiling.
 var ProfilingFlags = Flags{
 	&cli.StringFlag{
-		Name: FlagProfilingDSN,
+		Name:     FlagProfilingDSN,
+		Category: CategoryProfiling,
 		Usage: "The address to the Pyroscope server, in the format " +
 			"'http://basic:auth@server:port?token=auth-token&tenantid=tenant-id'.",
 		EnvVars: []string{"PROFILING_DSN"},
 	},
 	&cli.DurationFlag{
-		Name:    FlagProfileUploadRate,
-		Usage:   "The rate at which profiles are uploaded.",
-		Value:   15 * time.Second,
-		EnvVars: []string{"PROFILING_UPLOAD_RATE"},
+		Name:     FlagProfileUploadRate,
+		Category: CategoryProfiling,
+		Usage:    "The rate at which profiles are uploaded.",
+		Value:    15 * time.Second,
+		EnvVars:  []string{"PROFILING_UPLOAD_RATE"},
 	},
 	&cli.StringSliceFlag{
-		Name:    FlagProfilingTags,
-		Usage:   "A list of tags appended to every profile. Format: key=value.",
-		EnvVars: []string{"PROFILING_TAGS"},
+		Name:     FlagProfilingTags,
+		Category: CategoryProfiling,
+		Usage:    "A list of tags appended to every profile. Format: key=value.",
+		EnvVars:  []string{"PROFILING_TAGS"},
 	},
 	&cli.StringSliceFlag{
-		Name:    FlagProfilingTypes,
-		Usage:   "The type of profiles to include. Defaults to all.",
-		EnvVars: []string{"PROFILING_TYPES"},
+		Name:     FlagProfilingTypes,
+		Category: CategoryProfiling,
+		Usage:    "The type of profiles to include. Defaults to all.",
+		EnvVars:  []string{"PROFILING_TYPES"},
 	},
 }
 

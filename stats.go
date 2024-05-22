@@ -26,28 +26,35 @@ const (
 	FlagStatsTags     = "stats.tags"
 )
 
+// CategoryStats is the stats flag category.
+var CategoryStats = "Stats"
+
 // StatsFlags are flags that configure stats.
 var StatsFlags = Flags{
 	&cli.StringFlag{
-		Name:    FlagStatsDSN,
-		Usage:   "The DSN of a stats backend.",
-		EnvVars: []string{"STATS_DSN"},
+		Name:     FlagStatsDSN,
+		Category: CategoryStats,
+		Usage:    "The DSN of a stats backend.",
+		EnvVars:  []string{"STATS_DSN"},
 	},
 	&cli.DurationFlag{
-		Name:    FlagStatsInterval,
-		Usage:   "The frequency at which the stats are reported.",
-		Value:   time.Second,
-		EnvVars: []string{"STATS_INTERVAL"},
+		Name:     FlagStatsInterval,
+		Category: CategoryStats,
+		Usage:    "The frequency at which the stats are reported.",
+		Value:    time.Second,
+		EnvVars:  []string{"STATS_INTERVAL"},
 	},
 	&cli.StringFlag{
-		Name:    FlagStatsPrefix,
-		Usage:   "The prefix of the measurements names.",
-		EnvVars: []string{"STATS_PREFIX"},
+		Name:     FlagStatsPrefix,
+		Category: CategoryStats,
+		Usage:    "The prefix of the measurements names.",
+		EnvVars:  []string{"STATS_PREFIX"},
 	},
 	&cli.StringSliceFlag{
-		Name:    FlagStatsTags,
-		Usage:   "A list of tags appended to every measurement. Format: key=value.",
-		EnvVars: []string{"STATS_TAGS"},
+		Name:     FlagStatsTags,
+		Category: CategoryStats,
+		Usage:    "A list of tags appended to every measurement. Format: key=value.",
+		EnvVars:  []string{"STATS_TAGS"},
 	},
 }
 
