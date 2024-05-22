@@ -26,38 +26,47 @@ const (
 	FlagTracingRatio            = "tracing.ratio"
 )
 
+// CategoryTracing is the tracing flag category.
+var CategoryTracing = "Tracing"
+
 // TracingFlags are flags that configure tracing.
 var TracingFlags = Flags{
 	&cli.StringFlag{
-		Name:    FlagTracingExporter,
-		Usage:   "The tracing backend. Supported: 'zipkin', 'otlphttp', 'otlpgrpc'.",
-		EnvVars: []string{"TRACING_EXPORTER"},
+		Name:     FlagTracingExporter,
+		Category: CategoryTracing,
+		Usage:    "The tracing backend. Supported: 'zipkin', 'otlphttp', 'otlpgrpc'.",
+		EnvVars:  []string{"TRACING_EXPORTER"},
 	},
 	&cli.StringFlag{
-		Name:    FlagTracingEndpoint,
-		Usage:   "The tracing backend endpoint.",
-		EnvVars: []string{"TRACING_ENDPOINT"},
+		Name:     FlagTracingEndpoint,
+		Category: CategoryTracing,
+		Usage:    "The tracing backend endpoint.",
+		EnvVars:  []string{"TRACING_ENDPOINT"},
 	},
 	&cli.BoolFlag{
-		Name:    FlagTracingEndpointInsecure,
-		Usage:   "Determines if the endpoint is insecure.",
-		EnvVars: []string{"TRACING_ENDPOINT_INSECURE"},
+		Name:     FlagTracingEndpointInsecure,
+		Category: CategoryTracing,
+		Usage:    "Determines if the endpoint is insecure.",
+		EnvVars:  []string{"TRACING_ENDPOINT_INSECURE"},
 	},
 	&cli.StringSliceFlag{
-		Name:    FlagTracingTags,
-		Usage:   "A list of tags appended to every trace. Format: key=value.",
-		EnvVars: []string{"TRACING_TAGS"},
+		Name:     FlagTracingTags,
+		Category: CategoryTracing,
+		Usage:    "A list of tags appended to every trace. Format: key=value.",
+		EnvVars:  []string{"TRACING_TAGS"},
 	},
 	&cli.StringSliceFlag{
-		Name:    FlagTracingHeaders,
-		Usage:   "A list of headers appended to every trace when supported by the exporter. Format: key=value.",
-		EnvVars: []string{"TRACING_HEADERS"},
+		Name:     FlagTracingHeaders,
+		Category: CategoryTracing,
+		Usage:    "A list of headers appended to every trace when supported by the exporter. Format: key=value.",
+		EnvVars:  []string{"TRACING_HEADERS"},
 	},
 	&cli.Float64Flag{
-		Name:    FlagTracingRatio,
-		Usage:   "The ratio between 0 and 1 of sample traces to take.",
-		Value:   0.5,
-		EnvVars: []string{"TRACING_RATIO"},
+		Name:     FlagTracingRatio,
+		Category: CategoryTracing,
+		Usage:    "The ratio between 0 and 1 of sample traces to take.",
+		Value:    0.5,
+		EnvVars:  []string{"TRACING_RATIO"},
 	},
 }
 

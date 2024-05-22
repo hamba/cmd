@@ -15,23 +15,29 @@ const (
 	FlagLogCtx    = "log.ctx"
 )
 
+// CategoryLog is the log flag category.
+var CategoryLog = "Logging"
+
 // LogFlags are flags that configure logging.
 var LogFlags = Flags{
 	&cli.StringFlag{
-		Name:    FlagLogFormat,
-		Usage:   "Specify the format of logs. Supported formats: 'logfmt', 'json', 'console'",
-		EnvVars: []string{"LOG_FORMAT"},
+		Name:     FlagLogFormat,
+		Category: CategoryLog,
+		Usage:    "Specify the format of logs. Supported formats: 'logfmt', 'json', 'console'",
+		EnvVars:  []string{"LOG_FORMAT"},
 	},
 	&cli.StringFlag{
-		Name:    FlagLogLevel,
-		Value:   "info",
-		Usage:   "Specify the log level. e.g. 'trace', 'debug', 'info', 'error'.",
-		EnvVars: []string{"LOG_LEVEL"},
+		Name:     FlagLogLevel,
+		Category: CategoryLog,
+		Value:    "info",
+		Usage:    "Specify the log level. e.g. 'trace', 'debug', 'info', 'error'.",
+		EnvVars:  []string{"LOG_LEVEL"},
 	},
 	&cli.StringSliceFlag{
-		Name:    FlagLogCtx,
-		Usage:   "A list of context field appended to every log. Format: key=value.",
-		EnvVars: []string{"LOG_CTX"},
+		Name:     FlagLogCtx,
+		Category: CategoryLog,
+		Usage:    "A list of context field appended to every log. Format: key=value.",
+		EnvVars:  []string{"LOG_CTX"},
 	},
 }
 
