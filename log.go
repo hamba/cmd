@@ -16,14 +16,14 @@ const (
 )
 
 // CategoryLog is the log flag category.
-var CategoryLog = "Logging"
+const CategoryLog = "Logging"
 
 // LogFlags are flags that configure logging.
 var LogFlags = Flags{
 	&cli.StringFlag{
 		Name:     FlagLogFormat,
 		Category: CategoryLog,
-		Usage:    "Specify the format of logs. Supported formats: 'logfmt', 'json', 'console'",
+		Usage:    "Specify the format of logs. Supported formats: 'logfmt', 'json', 'console'.",
 		EnvVars:  []string{"LOG_FORMAT"},
 	},
 	&cli.StringFlag{

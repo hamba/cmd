@@ -27,7 +27,7 @@ const (
 )
 
 // CategoryStats is the stats flag category.
-var CategoryStats = "Stats"
+const CategoryStats = "Stats"
 
 // StatsFlags are flags that configure stats.
 var StatsFlags = Flags{
