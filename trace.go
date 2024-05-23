@@ -27,7 +27,7 @@ const (
 )
 
 // CategoryTracing is the tracing flag category.
-var CategoryTracing = "Tracing"
+const CategoryTracing = "Tracing"
 
 // TracingFlags are flags that configure tracing.
 var TracingFlags = Flags{

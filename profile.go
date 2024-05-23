@@ -33,14 +33,14 @@ const (
 )
 
 // CategoryProfiling is the profiling category.
-var CategoryProfiling = "Profiling"
+const CategoryProfiling = "Profiling"
 
 // ProfilingFlags are flags that configure profiling.
 var ProfilingFlags = Flags{
 	&cli.StringFlag{
 		Name:     FlagProfilingDSN,
 		Category: CategoryProfiling,
-		Usage: "The address to the Pyroscope server, in the format " +
+		Usage: "The address to the Pyroscope server, in the format: " +
 			"'http://basic:auth@server:port?token=auth-token&tenantid=tenant-id'.",
 		EnvVars: []string{"PROFILING_DSN"},
 	},
