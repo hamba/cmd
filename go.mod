@@ -5,7 +5,7 @@ go 1.21
 require (
 	github.com/fatih/color v1.17.0
 	github.com/grafana/otel-profiling-go v0.5.1
-	github.com/grafana/pyroscope-go v1.1.1
+	github.com/grafana/pyroscope-go v1.1.2
 	github.com/hamba/logger/v2 v2.6.0
 	github.com/hamba/statter/v2 v2.3.5
 	github.com/stretchr/testify v1.9.0
@@ -30,7 +30,7 @@ require (
 	github.com/go-logr/stdr v1.2.2 // indirect
 	github.com/go-stack/stack v1.8.1 // indirect
 	github.com/google/uuid v1.6.0 // indirect
-	github.com/grafana/pyroscope-go/godeltaprof v0.1.6 // indirect
+	github.com/grafana/pyroscope-go/godeltaprof v0.1.8 // indirect
 	github.com/grpc-ecosystem/grpc-gateway/v2 v2.20.0 // indirect
 	github.com/klauspost/compress v1.17.8 // indirect
 	github.com/mattn/go-colorable v0.1.13 // indirect
