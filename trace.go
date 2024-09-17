@@ -122,7 +122,7 @@ func createExporter(c *cli.Context) (trace.SpanExporter, error) {
 
 	switch backend {
 	case "":
-		return nil, nil
+		return nil, nil //nolint:nilnil
 	case "zipkin":
 		return zipkin.New(endpoint)
 	case "otlphttp":
