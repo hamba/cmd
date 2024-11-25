@@ -8,7 +8,7 @@ require (
 	github.com/grafana/pyroscope-go v1.2.0
 	github.com/hamba/logger/v2 v2.7.0
 	github.com/hamba/statter/v2 v2.4.0
-	github.com/stretchr/testify v1.9.0
+	github.com/stretchr/testify v1.10.0
 	github.com/urfave/cli/v2 v2.27.5
 	go.opentelemetry.io/otel v1.32.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.32.0
