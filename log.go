@@ -1,6 +1,7 @@
 package cmd
 
 import (
+	"io"
 	"os"
 
 	"github.com/hamba/logger/v2"
@@ -41,8 +42,18 @@ var LogFlags = Flags{
 	},
 }
 
+// LoggerOptions are options for creating a logger.
+type LoggerOptions struct {
+	Writer io.Writer
+}
+
 // NewLogger returns a logger configured from the cli.
 func NewLogger(c *cli.Context) (*logger.Logger, error) {
+	return NewLoggerWithOptions(c, &LoggerOptions{})
+}
+
+// NewLoggerWithOptions returns a logger configured from the cli.
+func NewLoggerWithOptions(c *cli.Context, opts *LoggerOptions) (*logger.Logger, error) {
 	str := c.String(FlagLogLevel)
 	if str == "" {
 		str = "info"
@@ -65,7 +76,12 @@ func NewLogger(c *cli.Context) (*logger.Logger, error) {
 		fields[i] = ctx.Str(t[0], t[1])
 	}
 
-	return logger.New(os.Stdout, fmtr, lvl).With(fields...), nil
+	w := opts.Writer
+	if w == nil {
+		w = os.Stdout
+	}
+
+	return logger.New(w, fmtr, lvl).With(fields...), nil
 }
 
 func newLogFormatter(c *cli.Context) logger.Formatter {
