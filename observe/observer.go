@@ -24,6 +24,7 @@ type Options struct {
 	LogTimeFormat string
 	LogTimestamps bool
 	LogCtx        []logger.Field
+	LogWriter     io.Writer
 
 	StatsRuntime bool
 	StatsTags    []statter.Tag
@@ -61,7 +62,7 @@ func NewFromCLI(cliCtx *cli.Context, svc string, opts *Options) (*Observer, erro
 	}
 
 	// Logger.
-	log, err := cmd.NewLogger(cliCtx)
+	log, err := cmd.NewLoggerWithOptions(cliCtx, &cmd.LoggerOptions{Writer: opts.LogWriter})
 	if err != nil {
 		return nil, err
 	}
