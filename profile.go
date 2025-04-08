@@ -6,9 +6,10 @@ import (
 	"net/url"
 	"time"
 
+	"github.com/ettle/strcase"
 	"github.com/grafana/pyroscope-go"
 	"github.com/hamba/logger/v2"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 var allProfilingTypes = []pyroscope.ProfileType{
@@ -42,33 +43,33 @@ var ProfilingFlags = Flags{
 		Category: CategoryProfiling,
 		Usage: "The address to the Pyroscope server, in the format: " +
 			"'http://basic:auth@server:port?token=auth-token&tenantid=tenant-id'.",
-		EnvVars: []string{"PROFILING_DSN"},
+		Sources: cli.EnvVars(strcase.ToSNAKE(FlagProfilingDSN)),
 	},
 	&cli.DurationFlag{
 		Name:     FlagProfileUploadRate,
 		Category: CategoryProfiling,
 		Usage:    "The rate at which profiles are uploaded.",
 		Value:    15 * time.Second,
-		EnvVars:  []string{"PROFILING_UPLOAD_RATE"},
+		Sources:  cli.EnvVars(strcase.ToSNAKE(FlagProfileUploadRate)),
 	},
-	&cli.StringSliceFlag{
+	&cli.StringMapFlag{
 		Name:     FlagProfilingTags,
 		Category: CategoryProfiling,
-		Usage:    "A list of tags appended to every profile. Format: key=value.",
-		EnvVars:  []string{"PROFILING_TAGS"},
+		Usage:    "A list of tags appended to every profile.",
+		Sources:  cli.EnvVars(strcase.ToSNAKE(FlagProfilingTags)),
 	},
 	&cli.StringSliceFlag{
 		Name:     FlagProfilingTypes,
 		Category: CategoryProfiling,
 		Usage:    "The type of profiles to include. Defaults to all.",
-		EnvVars:  []string{"PROFILING_TYPES"},
+		Sources:  cli.EnvVars(strcase.ToSNAKE(FlagProfilingTypes)),
 	},
 }
 
 // NewProfiler returns a profiler configured from the cli.
 // If no profiler is configured, nil is returned.
-func NewProfiler(c *cli.Context, svc string, log *logger.Logger) (*pyroscope.Profiler, error) {
-	dsn := c.String(FlagProfilingDSN)
+func NewProfiler(cmd *cli.Command, svc string, log *logger.Logger) (*pyroscope.Profiler, error) {
+	dsn := cmd.String(FlagProfilingDSN)
 	if dsn == "" {
 		//nolint:nilnil // There is no sentinel in this case.
 		return nil, nil
@@ -97,16 +98,8 @@ func NewProfiler(c *cli.Context, svc string, log *logger.Logger) (*pyroscope.Pro
 		Path:   u.Path,
 	}
 
-	var tags map[string]string
-	if pairs := c.StringSlice(FlagProfilingTags); len(pairs) > 0 {
-		tags, err = sliceToMap(pairs)
-		if err != nil {
-			return nil, err
-		}
-	}
-
 	types := allProfilingTypes
-	if newTypes := c.StringSlice(FlagProfilingTypes); len(newTypes) > 0 {
+	if newTypes := cmd.StringSlice(FlagProfilingTypes); len(newTypes) > 0 {
 		types = make([]pyroscope.ProfileType, len(newTypes))
 		for i, typ := range newTypes {
 			types[i] = pyroscope.ProfileType(typ)
@@ -115,13 +108,13 @@ func NewProfiler(c *cli.Context, svc string, log *logger.Logger) (*pyroscope.Pro
 
 	cfg := pyroscope.Config{
 		ApplicationName:   svc,
-		Tags:              tags,
+		Tags:              cmd.StringMap(FlagProfilingTags),
 		ServerAddress:     srvURL.String(),
 		AuthToken:         authToken,
 		BasicAuthUser:     username,
 		BasicAuthPassword: password,
 		TenantID:          tenantID,
-		UploadRate:        c.Duration(FlagProfileUploadRate),
+		UploadRate:        cmd.Duration(FlagProfileUploadRate),
 		Logger:            pyroLogAdapter{log: log},
 		ProfileTypes:      types,
 	}

@@ -4,9 +4,10 @@ import (
 	"io"
 	"os"
 
+	"github.com/ettle/strcase"
 	"github.com/hamba/logger/v2"
 	"github.com/hamba/logger/v2/ctx"
-	"github.com/urfave/cli/v2"
+	"github.com/urfave/cli/v3"
 )
 
 // Log flag constants declared for CLI use.
@@ -24,21 +25,21 @@ var LogFlags = Flags{
 	&cli.StringFlag{
 		Name:     FlagLogFormat,
 		Category: CategoryLog,
-		Usage:    "Specify the format of logs. Supported formats: 'logfmt', 'json', 'console'.",
-		EnvVars:  []string{"LOG_FORMAT"},
+		Usage:    "Specify the format of logs. Supported formats: 'logfmt', 'json', 'console'",
+		Sources:  cli.EnvVars(strcase.ToSNAKE(FlagLogFormat)),
 	},
 	&cli.StringFlag{
 		Name:     FlagLogLevel,
 		Category: CategoryLog,
 		Value:    "info",
-		Usage:    "Specify the log level. e.g. 'trace', 'debug', 'info', 'error'.",
-		EnvVars:  []string{"LOG_LEVEL"},
+		Usage:    "Specify the log level. e.g. 'debug', 'info', 'error'.",
+		Sources:  cli.EnvVars(strcase.ToSNAKE(FlagLogLevel)),
 	},
-	&cli.StringSliceFlag{
+	&cli.StringMapFlag{
 		Name:     FlagLogCtx,
 		Category: CategoryLog,
 		Usage:    "A list of context field appended to every log. Format: key=value.",
-		EnvVars:  []string{"LOG_CTX"},
+		Sources:  cli.EnvVars(strcase.ToSNAKE(FlagLogCtx)),
 	},
 }
 
@@ -48,13 +49,13 @@ type LoggerOptions struct {
 }
 
 // NewLogger returns a logger configured from the cli.
-func NewLogger(c *cli.Context) (*logger.Logger, error) {
-	return NewLoggerWithOptions(c, &LoggerOptions{})
+func NewLogger(cmd *cli.Command) (*logger.Logger, error) {
+	return NewLoggerWithOptions(cmd, &LoggerOptions{})
 }
 
 // NewLoggerWithOptions returns a logger configured from the cli.
-func NewLoggerWithOptions(c *cli.Context, opts *LoggerOptions) (*logger.Logger, error) {
-	str := c.String(FlagLogLevel)
+func NewLoggerWithOptions(cmd *cli.Command, opts *LoggerOptions) (*logger.Logger, error) {
+	str := cmd.String(FlagLogLevel)
 	if str == "" {
 		str = "info"
 	}
@@ -64,16 +65,13 @@ func NewLoggerWithOptions(c *cli.Context, opts *LoggerOptions) (*logger.Logger, 
 		return nil, err
 	}
 
-	fmtr := newLogFormatter(c)
+	fmtr := newLogFormatter(cmd)
 
-	tags, err := Split(c.StringSlice(FlagLogCtx), "=")
-	if err != nil {
-		return nil, err
-	}
+	tags := cmd.StringMap(FlagLogCtx)
 
-	fields := make([]logger.Field, len(tags))
-	for i, t := range tags {
-		fields[i] = ctx.Str(t[0], t[1])
+	fields := make([]logger.Field, 0, len(tags))
+	for k, v := range tags {
+		fields = append(fields, ctx.Str(k, v))
 	}
 
 	w := opts.Writer
@@ -84,8 +82,8 @@ func NewLoggerWithOptions(c *cli.Context, opts *LoggerOptions) (*logger.Logger, 
 	return logger.New(w, fmtr, lvl).With(fields...), nil
 }
 
-func newLogFormatter(c *cli.Context) logger.Formatter {
-	format := c.String(FlagLogFormat)
+func newLogFormatter(cmd *cli.Command) logger.Formatter {
+	format := cmd.String(FlagLogFormat)
 	switch format {
 	case "json":
 		return logger.JSONFormat()

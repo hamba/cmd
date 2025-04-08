@@ -33,6 +33,8 @@ linters:
     - wsl
   settings:
     cyclop:
-      max-complexity: 12
+      max-complexity: 15
+    lll:
+      line-length: 160
   exclusions:
     generated: lax
