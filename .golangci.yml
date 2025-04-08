@@ -34,7 +34,6 @@ linters:
   settings:
     cyclop:
       max-complexity: 15
-      skip-tests: true
     lll:
       line-length: 160
   exclusions:
