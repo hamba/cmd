@@ -1,6 +1,4 @@
 version: "2"
-run:
-  tests: false
 
 formatters:
   enable:
@@ -28,12 +26,15 @@ linters:
     - exhaustive
     - exhaustruct
     - forcetypeassert
+    - funcorder
     - funlen
     - gochecknoglobals
     - gochecknoinits
     - ireturn
     - mnd
     - nlreturn
+    - paralleltest
+    - testableexamples
     - varnamelen
     - wrapcheck
     - wsl

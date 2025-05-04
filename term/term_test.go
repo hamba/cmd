@@ -37,7 +37,6 @@ func TestBasic_Output(t *testing.T) {
 	}
 
 	for _, test := range tests {
-		test := test
 		t.Run(test.name, func(t *testing.T) {
 			var buf bytes.Buffer
 			trm := term.Basic{
@@ -86,7 +85,7 @@ func TestBasic_Error(t *testing.T) {
 
 	trm.Error("input string")
 
-	assert.Equal(t, "", buf.String())
+	assert.Empty(t, buf.String())
 	assert.Equal(t, "input string\n", errBuf.String())
 }
 
