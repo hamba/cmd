@@ -103,8 +103,8 @@ func TestNewTracer(t *testing.T) {
 		t.Run(test.name, func(t *testing.T) {
 			c := &cli.Command{
 				Flags: cmd.TracingFlags,
-				Action: func(_ context.Context, c *cli.Command) error {
-					_, err := cmd.NewTracer(t.Context(), c, log,
+				Action: func(ctx context.Context, c *cli.Command) error {
+					_, err := cmd.NewTracer(ctx, c, log,
 						semconv.ServiceNameKey.String("my-service"),
 						semconv.ServiceVersionKey.String("1.0.0"),
 					)
