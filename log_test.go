@@ -76,6 +76,5 @@ func TestNewLogger(t *testing.T) {
 
 			test.wantErr(t, err)
 		})
-
 	}
 }
