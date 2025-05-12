@@ -12,7 +12,7 @@ require (
 	github.com/hamba/logger/v2 v2.8.0
 	github.com/hamba/statter/v2 v2.6.1
 	github.com/stretchr/testify v1.10.0
-	github.com/urfave/cli/v3 v3.3.2
+	github.com/urfave/cli/v3 v3.3.3
 	go.opentelemetry.io/otel v1.35.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc v1.35.0
 	go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp v1.35.0
