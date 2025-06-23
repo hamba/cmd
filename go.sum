@@ -1,5 +1,5 @@
-github.com/VictoriaMetrics/metrics v1.35.2 h1:Bj6L6ExfnakZKYPpi7mGUnkJP4NGQz2v5wiChhXNyWQ=
-github.com/VictoriaMetrics/metrics v1.35.2/go.mod h1:r7hveu6xMdUACXvB8TYdAj8WEsKzWB0EkpJN+RDtOf8=
+github.com/VictoriaMetrics/metrics v1.37.0 h1:u5Yr+HFofQyn7kgmmkufgkX0nEA6G1oEyK2eaKsVaUM=
+github.com/VictoriaMetrics/metrics v1.37.0/go.mod h1:r7hveu6xMdUACXvB8TYdAj8WEsKzWB0EkpJN+RDtOf8=
 github.com/beorn7/perks v1.0.1 h1:VlbKKnNfV8bJzeqoa4cOKqO6bYr3WgKZxO8Z16+hsOM=
 github.com/beorn7/perks v1.0.1/go.mod h1:G2ZrVWU2WbWT9wwq4/hrbKbnv/1ERSJQ0ibhJ6rlkpw=
 github.com/cactus/go-statsd-client/v5 v5.1.0 h1:sbbdfIl9PgisjEoXzvXI1lwUKWElngsjJKaZeC021P4=
@@ -40,8 +40,8 @@ github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3 h1:5ZPtiqj0JL5oKWmcsq4VMaAW5uk
 github.com/grpc-ecosystem/grpc-gateway/v2 v2.26.3/go.mod h1:ndYquD05frm2vACXE1nsccT4oJzjhw2arTS2cpUD1PI=
 github.com/hamba/logger/v2 v2.8.0 h1:0JJnEhVW4sHGn4/9fPP0LsZXD2ytG+NrnrXCdM8/vmg=
 github.com/hamba/logger/v2 v2.8.0/go.mod h1:V58KZPAmDEWi14dOZjbKDPFkdyvpGwxXtLzLkVTNBic=
-github.com/hamba/statter/v2 v2.6.1 h1:AVNKPEyRz3y4tpzkW4a7eHcdpjUOvyEtH0eqSRQl/uY=
-github.com/hamba/statter/v2 v2.6.1/go.mod h1:r3rbO7/TeKsPpL5iFMOKqSD6PzLptg+w6TPHccBNeaQ=
+github.com/hamba/statter/v2 v2.7.0 h1:9CnjJ5PcxOzIVJSAFSJm0lnUUBjTo3psV9nn+yZ1cMM=
+github.com/hamba/statter/v2 v2.7.0/go.mod h1:SJPj0HCM+z7GxnoG+YBgN87SP0GVJ5YPjqHINrgqFYE=
 github.com/jessevdk/go-flags v1.4.0/go.mod h1:4FA24M0QyGHXBuZZK/XkWh8h0e1EYbRYJSGM75WSRxI=
 github.com/klauspost/compress v1.18.0 h1:c/Cqfb0r+Yi+JtIEq73FWXVkRonBlf0CRNYc8Zttxdo=
 github.com/klauspost/compress v1.18.0/go.mod h1:2Pp+KzxcywXVXMr50+X0Q/Lsb43OQHYWRCY2AiWywWQ=
