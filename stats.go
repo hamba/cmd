@@ -19,6 +19,8 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
+const defaultStatsInterval = time.Second
+
 // Stats flag constants declared for CLI use.
 const (
 	FlagStatsDSN      = "stats.dsn"
@@ -42,7 +44,7 @@ var StatsFlags = Flags{
 		Name:     FlagStatsInterval,
 		Category: CategoryStats,
 		Usage:    "The frequency at which the stats are reported.",
-		Value:    time.Second,
+		Value:    defaultStatsInterval,
 		Sources:  cli.EnvVars(strcase.ToSNAKE(FlagStatsInterval)),
 	},
 	&cli.StringFlag{
@@ -67,6 +69,9 @@ func NewStatter(cmd *cli.Command, log *logger.Logger, opts ...statter.Option) (*
 	}
 
 	intv := cmd.Duration(FlagStatsInterval)
+	if intv <= 0 {
+		intv = defaultStatsInterval
+	}
 	prefix, tags := statsWith(cmd)
 
 	opts = append(opts, statter.WithPrefix(prefix), statter.WithTags(tags...))

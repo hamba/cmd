@@ -11,7 +11,7 @@ import (
 	"github.com/urfave/cli/v3"
 )
 
-func TestNewStats(t *testing.T) {
+func TestNewStatter(t *testing.T) {
 	log := logger.New(io.Discard, logger.LogfmtFormat(), logger.Error)
 
 	tests := []struct {
