@@ -8,7 +8,7 @@ require (
 	github.com/ettle/strcase v0.2.0
 	github.com/fatih/color v1.18.0
 	github.com/grafana/otel-profiling-go v0.5.1
-	github.com/grafana/pyroscope-go v1.2.2
+	github.com/grafana/pyroscope-go v1.2.4
 	github.com/hamba/logger/v2 v2.8.0
 	github.com/hamba/statter/v2 v2.7.0
 	github.com/stretchr/testify v1.10.0
