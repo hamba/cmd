@@ -33,11 +33,13 @@ linters:
     - ireturn
     - mnd
     - nlreturn
+    - noinlineerr
     - paralleltest
     - testableexamples
     - varnamelen
     - wrapcheck
     - wsl
+    - wsl_v5
   settings:
     cyclop:
       max-complexity: 15
