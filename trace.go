@@ -12,7 +12,6 @@ import (
 	"go.opentelemetry.io/otel/attribute"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracegrpc"
 	"go.opentelemetry.io/otel/exporters/otlp/otlptrace/otlptracehttp"
-	"go.opentelemetry.io/otel/exporters/zipkin"
 	"go.opentelemetry.io/otel/sdk/resource"
 	"go.opentelemetry.io/otel/sdk/trace"
 	semconv "go.opentelemetry.io/otel/semconv/v1.24.0"
@@ -36,7 +35,7 @@ var TracingFlags = Flags{
 	&cli.StringFlag{
 		Name:     FlagTracingExporter,
 		Category: CategoryTracing,
-		Usage:    "The tracing backend. Supported: 'zipkin', 'otlphttp', 'otlpgrpc'.",
+		Usage:    "The tracing backend. Supported: 'otlphttp', 'otlpgrpc'.",
 		Sources:  cli.EnvVars(strcase.ToSNAKE(FlagTracingExporter)),
 	},
 	&cli.StringFlag{
@@ -109,8 +108,6 @@ func createExporter(ctx context.Context, cmd *cli.Command) (trace.SpanExporter, 
 	switch backend {
 	case "":
 		return nil, nil //nolint:nilnil
-	case "zipkin":
-		return zipkin.New(endpoint)
 	case "otlphttp":
 		opts := []otlptracehttp.Option{otlptracehttp.WithEndpoint(endpoint), otlptracehttp.WithHeaders(cmd.StringMap(FlagTracingHeaders))}
 		if cmd.Bool(FlagTracingEndpointInsecure) {

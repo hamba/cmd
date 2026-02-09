@@ -26,14 +26,6 @@ func TestNewTracer(t *testing.T) {
 			wantErr: assert.NoError,
 		},
 		{
-			name: "zipkin",
-			args: []string{
-				"--tracing.exporter=zipkin",
-				"--tracing.endpoint=http://localhost:1234/api/v2",
-			},
-			wantErr: assert.NoError,
-		},
-		{
 			name: "otelhttp",
 			args: []string{
 				"--tracing.exporter=otlphttp",
@@ -52,7 +44,7 @@ func TestNewTracer(t *testing.T) {
 		{
 			name: "with tags",
 			args: []string{
-				"--tracing.exporter=zipkin",
+				"--tracing.exporter=otlphttp",
 				"--tracing.endpoint=http://localhost:1234/api/v2",
 				"--tracing.ratio=1",
 				"--tracing.tags=cluster=test",

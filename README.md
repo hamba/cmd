@@ -168,7 +168,7 @@ The tracing flags are used by `cmd.NewTracer` to create a new open telemetry `tr
 
 #### FlagTracingExporter: *--tracing.exporter, $TRACING_EXPORTER*
 
-This flag sets the exporter to send spans to. The available options are `zipkin`, `otlphttp` and `otlpgrpc`.
+This flag sets the exporter to send spans to. The available options are `otlphttp` and `otlpgrpc`.
 
 Example: `--tracing.exporter=otlphttp`
 
