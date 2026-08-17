@@ -1,6 +1,6 @@
 module github.com/hamba/cmd/v3
 
-go 1.25.12
+go 1.25.13
 
 require (
 	github.com/ettle/strcase v0.2.0
