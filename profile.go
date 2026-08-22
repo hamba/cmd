@@ -110,7 +110,7 @@ func NewProfiler(cmd *cli.Command, svc string, log *logger.Logger) (*pyroscope.P
 		ApplicationName:   svc,
 		Tags:              cmd.StringMap(FlagProfilingTags),
 		ServerAddress:     srvURL.String(),
-		AuthToken:         authToken,
+		AuthToken:         authToken, //nolint:staticcheck // Support until removal.
 		BasicAuthUser:     username,
 		BasicAuthPassword: password,
 		TenantID:          tenantID,
